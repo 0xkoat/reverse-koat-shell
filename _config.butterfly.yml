@@ -1,0 +1,453 @@
+# ======================================
+# Butterfly Theme Config
+# Blog: Reverse Koat Shell - HTB & CTF writeups
+# ======================================
+
+# --------------------------------------
+# Navigation Settings
+# --------------------------------------
+nav:
+  logo:
+  display_title: true
+  display_post_title: true
+  fixed: true
+
+menu:
+  Home: / || fas fa-home
+  Writeups||fas fa-flag:
+    HTB Machines: /categories/HTB-Machines/ || fas fa-server
+    HTB Challenges: /categories/HTB-Challenges/ || fas fa-puzzle-piece
+    CTF Writeups: /categories/CTF-Writeups/ || fas fa-trophy
+  Scripts & Tools: /categories/Scripts-Tools/ || fas fa-code
+  Other: /categories/Other/ || fas fa-ellipsis-h
+  About: /about/ || fas fa-user-secret
+
+# --------------------------------------
+# Code Blocks Settings
+# --------------------------------------
+code_blocks:
+  theme: darker
+  macStyle: true
+  height_limit: 400
+  word_wrap: false
+  copy: true
+  language: true
+  shrink: false
+  fullpage: true
+
+# Social media links
+social:
+  fab fa-github: https://github.com/0xkoat || GitHub || '#ffffff'
+  fab fa-hackthebox: https://app.hackthebox.com/public/users/3132736 || HackTheBox || '#9fef00'
+  fab fa-linkedin: https://www.linkedin.com/in/kessentini-youssef-pro/ || LinkedIn || '#0077b5'
+  fas fa-rss: /atom.xml || RSS || '#f6992a'
+
+# --------------------------------------
+# Image Settings
+# --------------------------------------
+favicon: /img/avatar.png
+
+avatar:
+  img: /img/avatar.png
+  effect: false
+
+disable_top_img: false
+default_top_img: /img/banner.png
+index_img: /img/banner.png
+archive_img: /img/banner.png
+tag_img: /img/banner.png
+category_img: /img/banner.png
+
+footer_img: false
+
+background:
+
+cover:
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover:
+    - /img/banner.png
+
+error_img:
+  flink: /img/avatar.png
+  post_page: /img/banner.png
+
+error_404:
+  enable: true
+  subtitle: 'Page Not Found — Are you lost in the matrix?'
+  background: /img/banner.png
+
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+  post:
+    position: left
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+
+# --------------------------------------
+# Index page settings
+# --------------------------------------
+index_site_info_top:
+index_top_img_height:
+
+subtitle:
+  enable: true
+  effect: true
+  typed_option:
+  source: false
+  sub:
+    - 'Escalating privileges, one write-up at a time.'
+    - 'root@reversekoatshell:~# cat flag.txt'
+    - 'Hacking is not a crime, it is a skill.'
+    - 'HTB | CTF | Pentesting | Security Research'
+
+index_layout: 3
+
+index_post_content:
+  method: 2
+  length: 500
+
+# --------------------------------------
+# Post Settings
+# --------------------------------------
+toc:
+  post: true
+  page: false
+  number: true
+  expand: true
+  style_simple: false
+  scroll_percent: true
+
+post_copyright:
+  enable: true
+  decode: false
+  author_href: https://github.com/0xkoat
+  license: CC BY-NC-SA 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+reward:
+  enable: false
+
+post_edit:
+  enable: false
+
+related_post:
+  enable: true
+  limit: 6
+  date_type: created
+
+post_pagination: 1
+
+noticeOutdate:
+  enable: true
+  style: flat
+  limit_day: 365
+  position: top
+  message_prev: 'This writeup is'
+  message_next: 'days old. Some techniques may be outdated.'
+
+# --------------------------------------
+# Footer Settings
+# --------------------------------------
+footer:
+  nav:
+  owner:
+    enable: true
+    since: 2025
+  copyright:
+    enable: true
+    version: true
+  custom_text: '<span>root@reversekoatshell:~#&nbsp;</span><span style="color:#9fef00">_</span>'
+
+# --------------------------------------
+# Aside Settings
+# --------------------------------------
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: true
+    tag: true
+    category: true
+  card_author:
+    enable: true
+    description: 'Security researcher & CTF player. Escalating privileges one machine at a time.'
+    button:
+      enable: false
+      icon: fab fa-linkedin
+      text: Follow on LinkedIn
+      link: https://www.linkedin.com/in/kessentini-youssef-pro/
+  card_announcement:
+    enable: true
+    content: '🚩 New writeups every week! HTB machines, CTF challenges, and more.'
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+    sort_order:
+  card_categories:
+    enable: true
+    limit: 8
+    expand: none
+    sort_order:
+  card_tags:
+    enable: true
+    limit: 40
+    color: true
+    orderby: random
+    order: 1
+    sort_order:
+  card_archives:
+    enable: true
+    type: monthly
+    format: MMMM YYYY
+    order: -1
+    limit: 8
+    sort_order:
+  card_post_series:
+    enable: true
+    series_title: false
+    orderBy: 'date'
+    order: -1
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+    sort_order:
+
+# --------------------------------------
+# Bottom right button
+# --------------------------------------
+rightside_bottom:
+readmode: true
+
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: false
+
+display_mode: dark
+
+rightside_scroll_percent: true
+
+rightside_config_animation: true
+
+# --------------------------------------
+# Global Settings
+# --------------------------------------
+anchor:
+  auto_update: true
+  click_to_scroll: true
+
+photofigcaption: true
+
+copy:
+  enable: true
+  copyright:
+    enable: true
+    limit_count: 150
+
+wordcount:
+  enable: false
+
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+
+# --------------------------------------
+# Search
+# --------------------------------------
+search:
+  use: local_search
+  placeholder: 'Search writeups, machines, flags...'
+  local_search:
+    preload: false
+    top_n_per_article: 1
+    unescape: false
+    pagination:
+      enable: false
+      hitsPerPage: 8
+
+# --------------------------------------
+# Share System
+# --------------------------------------
+share:
+  use: sharejs
+  sharejs:
+    sites: x,reddit,telegram,email
+
+# --------------------------------------
+# Comments System
+# --------------------------------------
+comments:
+  use: 
+  text: false
+  lazyload: true
+  count: true
+  card_post_count: true
+
+giscus:
+  repo: 0xkoat/reverse-koat-shell # Change this to your exact repo
+  repo_id: "" # Fill this from giscus.app
+  category: "Announcements" 
+  category_id: "" # Fill this from giscus.app
+  light_theme: light
+  dark_theme: dark
+  js:
+  option:
+
+# --------------------------------------
+# Beautify / Effect
+# --------------------------------------
+theme_color:
+  enable: true
+  main: "#9fef00"
+  paginator: "#9fef00"
+  button_hover: "#00c4b6"
+  text_selection: "#9fef00"
+  link_color: "#9fef00"
+  meta_color: "#a0a0a0"
+  hr_color: "#9fef00"
+  code_foreground: "#9fef00"
+  code_background: "rgba(0, 0, 0, 0.8)"
+  toc_color: "#9fef00"
+  blockquote_padding_color: "#9fef00"
+  blockquote_background_color: "#1a2a1a"
+  scrollbar_color: "#9fef00"
+  meta_theme_color_light: "ffffff"
+  meta_theme_color_dark: "#0d0d0d"
+
+category_ui: index
+tag_ui: index
+
+rounded_corners_ui: true
+text_align_justify: false
+
+mask:
+  header: true
+  footer: true
+
+preloader:
+  enable: true
+  source: 2
+
+enter_transitions: true
+
+beautify:
+  enable: true
+  field: post
+  title_prefix_icon: '\f0c1'
+  title_prefix_icon_color: '#9fef00'
+
+font:
+  global_font_size:
+  code_font_size: 14px
+  font_family: "'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace"
+  code_font_family: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace"
+
+blog_title_font:
+  font_link: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap'
+  font_family: "'Space Grotesk', sans-serif"
+
+hr_icon:
+  enable: true
+  icon: '\f120'
+  icon_top:
+
+activate_power_mode:
+  enable: false
+
+canvas_nest:
+  enable: true
+  color: '0,255,0'
+  opacity: 0.15
+  zIndex: -1
+  count: 80
+  mobile: false
+
+fireworks:
+  enable: false
+
+# --------------------------------------
+# Lightbox Settings
+# --------------------------------------
+lightbox: medium_zoom
+
+# --------------------------------------
+# Tag Plugins settings
+# --------------------------------------
+series:
+  enable: true
+  orderBy: 'date'
+  order: 1
+  number: true
+
+mermaid:
+  enable: true
+  code_write: true
+  theme:
+    light: default
+    dark: dark
+  open_in_new_tab: true
+  zoom_pan: true
+
+note:
+  style: flat
+  icons: true
+  border_radius: 3
+  light_bg_offset: 0
+
+# --------------------------------------
+# Other Settings
+# --------------------------------------
+pjax:
+  enable: false
+
+snackbar:
+  enable: true
+  position: bottom-left
+  bg_light: '#9fef00'
+  bg_dark: '#1a2a1a'
+
+instantpage: false
+
+lazyload:
+  enable: true
+  native: true
+  field: site
+  blur: true
+
+Open_Graph_meta:
+  enable: true
+
+structured_data:
+  enable: true
+
+css_prefix: true
+
+inject:
+  head:
+    - <link rel="preconnect" href="https://fonts.googleapis.com">
+    - <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    - <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    - <link rel="stylesheet" href="/css/custom.css">
+  bottom:
+
+
+CDN:
+  internal_provider: local
+  third_party_provider: jsdelivr
+  version: true
