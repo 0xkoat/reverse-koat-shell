@@ -9,10 +9,10 @@
 /* Nav links base */
 #nav .menus_items .menus_item > a,
 #nav .menus_items .menus_item > a.site-page {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.04em !important;
-  padding: 6px 16px !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  padding: 10px 20px !important;
   border-radius: 8px !important;
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease !important;
   text-transform: uppercase !important;
@@ -35,16 +35,16 @@
 
 /* Nav bar itself — slightly taller */
 #nav {
-  height: 60px !important;
+  height: 75px !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
 }
 
 /* Dropdown menu items */
 .menus_item_child .site-page {
-  font-size: 0.88rem !important;
-  font-weight: 500 !important;
-  padding: 8px 18px !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
   letter-spacing: 0.03em !important;
   border-left: 2px solid transparent !important;
   transition: border-color 0.2s, color 0.2s, background 0.2s !important;
