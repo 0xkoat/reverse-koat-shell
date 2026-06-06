@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>Kessentini Youssef</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <id>https://0xkoat.github.io/reverse-koat-shell/</id>
+  <link href="https://0xkoat.github.io/reverse-koat-shell/" rel="alternate"/>
+  <link href="https://0xkoat.github.io/reverse-koat-shell/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, Kessentini Youssef</rights>
+  <subtitle>Escalating privileges, one write-up at a time.</subtitle>
+  <title>Reverse Koat Shell</title>
+  <updated>2026-06-06T21:52:57.265Z</updated>
+  <entry>
+    <author>
+      <name>Kessentini Youssef</name>
+    </author>
+    <category term="Other" scheme="https://0xkoat.github.io/reverse-koat-shell/categories/Other/"/>
+    <category term="Welcome" scheme="https://0xkoat.github.io/reverse-koat-shell/tags/Welcome/"/>
+    <id>https://0xkoat.github.io/reverse-koat-shell/2026/06/06/welcome/</id>
+    <link href="https://0xkoat.github.io/reverse-koat-shell/2026/06/06/welcome/"/>
+    <published>2026-06-06T21:50:00.000Z</published>
+    <summary>Welcome to my cybersecurity blog.</summary>
+    <title>Welcome to Reverse Koat Shell</title>
+    <updated>2026-06-06T21:52:57.265Z</updated>
+  </entry>
+</feed>

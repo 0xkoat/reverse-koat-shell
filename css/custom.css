@@ -1,0 +1,139 @@
+/* ============================================
+   Reverse Koat Shell — Custom Theme Overrides
+   ============================================ */
+
+/* ------------------------------------------
+   NAV BAR — Bigger, bolder, clearer buttons
+   ------------------------------------------ */
+
+/* Nav links base */
+#nav .menus_items .menus_item > a,
+#nav .menus_items .menus_item > a.site-page {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease !important;
+  text-transform: uppercase !important;
+}
+
+/* Nav hover effect — pill glow */
+#nav .menus_items .menus_item > a:hover,
+#nav .menus_items .menus_item > a.site-page:hover {
+  background: rgba(159, 239, 0, 0.12) !important;
+  color: #9fef00 !important;
+  box-shadow: 0 0 10px rgba(159, 239, 0, 0.25) !important;
+}
+
+/* Active/current page */
+#nav .menus_items .menus_item > a.active,
+#nav .menus_items .menus_item > a.site-page.active {
+  background: rgba(159, 239, 0, 0.15) !important;
+  color: #9fef00 !important;
+}
+
+/* Nav bar itself — slightly taller */
+#nav {
+  height: 60px !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Dropdown menu items */
+.menus_item_child .site-page {
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  padding: 8px 18px !important;
+  letter-spacing: 0.03em !important;
+  border-left: 2px solid transparent !important;
+  transition: border-color 0.2s, color 0.2s, background 0.2s !important;
+}
+
+.menus_item_child .site-page:hover {
+  border-left-color: #9fef00 !important;
+  color: #9fef00 !important;
+  background: rgba(159, 239, 0, 0.08) !important;
+}
+
+/* Dropdown arrow icon */
+.menus_items .menus_item > a .fa-chevron-down {
+  font-size: 0.7em !important;
+  margin-left: 4px !important;
+}
+
+/* ------------------------------------------
+   SITE TITLE in nav — make it pop
+   ------------------------------------------ */
+#nav .site-name {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  color: #9fef00 !important;
+  text-shadow: 0 0 15px rgba(159, 239, 0, 0.4) !important;
+}
+
+/* ------------------------------------------
+   AVATAR — smooth hover effect
+   ------------------------------------------ */
+#aside-content .card-info-avatar img,
+.card-info-avatar img {
+  border: 3px solid rgba(159, 239, 0, 0.4) !important;
+  box-shadow: 0 0 20px rgba(159, 239, 0, 0.2) !important;
+  transition: box-shadow 0.3s, border-color 0.3s !important;
+  border-radius: 50% !important;
+}
+
+.card-info-avatar img:hover {
+  box-shadow: 0 0 35px rgba(159, 239, 0, 0.5) !important;
+  border-color: #9fef00 !important;
+}
+
+/* ------------------------------------------
+   CARD AUTHOR BUTTON — bigger & more visible
+   ------------------------------------------ */
+.card-info-social-icons .social-icon,
+#aside-content .card-info .social-icon {
+  font-size: 1.1rem !important;
+  padding: 8px !important;
+  margin: 0 4px !important;
+}
+
+/* ------------------------------------------
+   POST CARDS — subtle glow on hover
+   ------------------------------------------ */
+#recent-posts .recent-post-item {
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+#recent-posts .recent-post-item:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 30px rgba(159, 239, 0, 0.12) !important;
+}
+
+/* ------------------------------------------
+   CODE BLOCKS — extra terminal feel
+   ------------------------------------------ */
+figure.highlight,
+.highlight-wrap {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  border: 1px solid rgba(159, 239, 0, 0.1) !important;
+}
+
+/* ------------------------------------------
+   SCROLLBAR
+   ------------------------------------------ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #9fef00;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b5f53a;
+}
