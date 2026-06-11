@@ -2,9 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://0xkoat.github.io/reverse-koat-shell/2026/06/11/SQL-Injection/</loc>
+    
+    <lastmod>2026-06-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://0xkoat.github.io/reverse-koat-shell/2026/06/06/welcome/</loc>
     
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-06-11</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -47,6 +56,27 @@
 
   
   <url>
+    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Portswigger/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Web-Security/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/SQLi/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Welcome/</loc>
     <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -54,6 +84,13 @@
   </url>
   
 
+  
+  <url>
+    <loc>https://0xkoat.github.io/reverse-koat-shell/categories/Portswigger/</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
   <url>
     <loc>https://0xkoat.github.io/reverse-koat-shell/categories/Other/</loc>
