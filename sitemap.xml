@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/2026/06/11/SQL-Injection/</loc>
+    <loc>https://kessentini-youssef.dev/2026/06/11/SQL-Injection/</loc>
     
     <lastmod>2026-06-12</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/2026/06/06/welcome/</loc>
+    <loc>https://kessentini-youssef.dev/2026/06/06/welcome/</loc>
     
     <lastmod>2026-06-11</lastmod>
     
@@ -20,7 +20,7 @@
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/about/</loc>
+    <loc>https://kessentini-youssef.dev/about/</loc>
     
     <lastmod>2026-06-06</lastmod>
     
@@ -29,7 +29,7 @@
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/categories/</loc>
+    <loc>https://kessentini-youssef.dev/categories/</loc>
     
     <lastmod>2026-06-06</lastmod>
     
@@ -38,7 +38,7 @@
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/</loc>
+    <loc>https://kessentini-youssef.dev/tags/</loc>
     
     <lastmod>2026-06-06</lastmod>
     
@@ -48,7 +48,7 @@
   
 
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell</loc>
+    <loc>https://kessentini-youssef.dev/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -56,28 +56,28 @@
 
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Welcome/</loc>
+    <loc>https://kessentini-youssef.dev/tags/Portswigger/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Portswigger/</loc>
+    <loc>https://kessentini-youssef.dev/tags/Web-Security/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/Web-Security/</loc>
+    <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/tags/SQLi/</loc>
+    <loc>https://kessentini-youssef.dev/tags/Welcome/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -86,14 +86,14 @@
 
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/categories/Other/</loc>
+    <loc>https://kessentini-youssef.dev/categories/Portswigger/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://0xkoat.github.io/reverse-koat-shell/categories/Portswigger/</loc>
+    <loc>https://kessentini-youssef.dev/categories/Other/</loc>
     <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
