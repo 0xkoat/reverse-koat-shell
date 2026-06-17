@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kessentini-youssef.dev/about/</loc>
+    
+    <lastmod>2026-06-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kessentini-youssef.dev/2026/06/11/SQL-Injection/</loc>
     
     <lastmod>2026-06-12</lastmod>
@@ -14,15 +23,6 @@
     <loc>https://kessentini-youssef.dev/2026/06/06/welcome/</loc>
     
     <lastmod>2026-06-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/about/</loc>
-    
-    <lastmod>2026-06-06</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

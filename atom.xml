@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <author>
-    <name>Kessentini Youssef</name>
+    <name>Youssef Kessentini</name>
   </author>
   <generator uri="https://hexo.io/">Hexo</generator>
   <id>https://kessentini-youssef.dev/</id>
   <link href="https://kessentini-youssef.dev/" rel="alternate"/>
   <link href="https://kessentini-youssef.dev/atom.xml" rel="self"/>
-  <rights>All rights reserved 2026, Kessentini Youssef</rights>
+  <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
-  <title>Reverse Koat Shell</title>
+  <title>Youssef Kessentini — Reverse Koat Shell</title>
   <updated>2026-06-12T18:09:29.033Z</updated>
   <entry>
     <author>
-      <name>Kessentini Youssef</name>
+      <name>Youssef Kessentini</name>
     </author>
     <category term="Portswigger" scheme="https://kessentini-youssef.dev/categories/Portswigger/"/>
     <category term="Portswigger" scheme="https://kessentini-youssef.dev/tags/Portswigger/"/>
@@ -28,7 +28,7 @@
   </entry>
   <entry>
     <author>
-      <name>Kessentini Youssef</name>
+      <name>Youssef Kessentini</name>
     </author>
     <category term="Other" scheme="https://kessentini-youssef.dev/categories/Other/"/>
     <category term="Welcome" scheme="https://kessentini-youssef.dev/tags/Welcome/"/>
