@@ -18,8 +18,9 @@ menu:
     HTB Machines: /categories/HTB-Machines/ || fas fa-server
     HTB Challenges: /categories/HTB-Challenges/ || fas fa-puzzle-piece
     CTF Writeups: /categories/CTF-Writeups/ || fas fa-trophy
-  Scripts & Tools: /categories/Scripts-Tools/ || fas fa-code
-  Other: /categories/Other/ || fas fa-ellipsis-h
+  Portswigger: /categories/Portswigger/ || fas fa-bug
+  Projects: /categories/Projects/ || fas fa-project-diagram
+  Events: /categories/Events/ || fas fa-calendar-alt
   About: /about/ || fas fa-user-secret
 
 # --------------------------------------
@@ -38,9 +39,8 @@ code_blocks:
 # Social media links
 social:
   fab fa-github: https://github.com/0xkoat || GitHub || '#ffffff'
-  fab fa-hackthebox: https://app.hackthebox.com/public/users/3132736 || HackTheBox || '#9fef00'
+  fas fa-cube: https://app.hackthebox.com/public/users/3132736 || HackTheBox || '#9fef00'
   fab fa-linkedin: https://www.linkedin.com/in/kessentini-youssef-pro/ || LinkedIn || '#0077b5'
-  fas fa-rss: /atom.xml || RSS || '#f6992a'
 
 # --------------------------------------
 # Image Settings
@@ -110,7 +110,7 @@ subtitle:
     - 'Hacking is not a crime, it is a skill.'
     - 'HTB | CTF | Pentesting | Security Research'
 
-index_layout: 3
+index_layout: 2
 
 index_post_content:
   method: 2
@@ -186,9 +186,6 @@ aside:
     description: 'Security researcher & CTF player. Escalating privileges one machine at a time.'
     button:
       enable: false
-      icon: fab fa-linkedin
-      text: Follow on LinkedIn
-      link: https://www.linkedin.com/in/kessentini-youssef-pro/
   card_announcement:
     enable: true
     content: '🚩 New writeups every week! HTB machines, CTF challenges, and more.'
@@ -293,7 +290,7 @@ share:
 # Comments System
 # --------------------------------------
 comments:
-  use: 
+  use: Giscus
   text: false
   lazyload: true
   count: true
@@ -301,9 +298,9 @@ comments:
 
 giscus:
   repo: 0xkoat/reverse-koat-shell # Change this to your exact repo
-  repo_id: "" # Fill this from giscus.app
+  repo_id: "R_kgDOSzIULQ" # Fill this from giscus.app
   category: "Announcements" 
-  category_id: "" # Fill this from giscus.app
+  category_id: "DIC_kwDOSzIULc4C--IV" # Fill this from giscus.app
   light_theme: light
   dark_theme: dark
   js:
