@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kessentini-youssef.dev/2026/06/20/Dark-Runes/</loc>
+    
+    <lastmod>2026-06-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kessentini-youssef.dev/about/</loc>
     
     <lastmod>2026-06-17</lastmod>
@@ -49,36 +58,71 @@
 
   <url>
     <loc>https://kessentini-youssef.dev/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
+    <loc>https://kessentini-youssef.dev/tags/HackTheBox/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Web/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/LFI/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Brute-Force/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/PDF-Injection/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://kessentini-youssef.dev/tags/Portswigger/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Web-Security/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Welcome/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -86,15 +130,22 @@
 
   
   <url>
+    <loc>https://kessentini-youssef.dev/categories/HackTheBox/</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://kessentini-youssef.dev/categories/Portswigger/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/categories/Other/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

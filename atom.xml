@@ -10,7 +10,24 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-06-12T18:09:29.033Z</updated>
+  <updated>2026-06-20T19:50:25.631Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
+    <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
+    <category term="LFI" scheme="https://kessentini-youssef.dev/tags/LFI/"/>
+    <category term="Brute Force" scheme="https://kessentini-youssef.dev/tags/Brute-Force/"/>
+    <category term="PDF Injection" scheme="https://kessentini-youssef.dev/tags/PDF-Injection/"/>
+    <id>https://kessentini-youssef.dev/2026/06/20/Dark-Runes/</id>
+    <link href="https://kessentini-youssef.dev/2026/06/20/Dark-Runes/"/>
+    <published>2026-06-20T19:00:00.000Z</published>
+    <summary>HTB Web challenge — Admin registration, 4-digit brute force, and Local File Inclusion via PhantomJS PDF rendering</summary>
+    <title>Dark Runes</title>
+    <updated>2026-06-20T19:50:25.631Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
