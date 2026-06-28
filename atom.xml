@@ -10,7 +10,29 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-06-20T19:50:25.631Z</updated>
+  <updated>2026-06-28T19:09:21.950Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
+    <category term="Linux" scheme="https://kessentini-youssef.dev/tags/Linux/"/>
+    <category term="RCE" scheme="https://kessentini-youssef.dev/tags/RCE/"/>
+    <category term="CVE-2025-47812" scheme="https://kessentini-youssef.dev/tags/CVE-2025-47812/"/>
+    <category term="CVE-2025-4517" scheme="https://kessentini-youssef.dev/tags/CVE-2025-4517/"/>
+    <category term="Wing FTP" scheme="https://kessentini-youssef.dev/tags/Wing-FTP/"/>
+    <category term="Null Byte Injection" scheme="https://kessentini-youssef.dev/tags/Null-Byte-Injection/"/>
+    <category term="Tarfile" scheme="https://kessentini-youssef.dev/tags/Tarfile/"/>
+    <category term="Privilege Escalation" scheme="https://kessentini-youssef.dev/tags/Privilege-Escalation/"/>
+    <category term="Password Cracking" scheme="https://kessentini-youssef.dev/tags/Password-Cracking/"/>
+    <id>https://kessentini-youssef.dev/2026/06/25/WingData/</id>
+    <link href="https://kessentini-youssef.dev/2026/06/25/WingData/"/>
+    <published>2026-06-25T11:00:00.000Z</published>
+    <summary>HTB Easy Linux machine — Wing FTP RCE via Null Byte Injection (CVE-2025-47812), credential harvesting, and root via Python tarfile symlink bypass (CVE-2025-4517)</summary>
+    <title>WingData</title>
+    <updated>2026-06-28T19:09:21.950Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
