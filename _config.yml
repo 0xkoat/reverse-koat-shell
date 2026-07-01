@@ -3,17 +3,18 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Reverse Koat Shell
+title: Youssef Kessentini — Reverse Koat Shell
 subtitle: 'Escalating privileges, one write-up at a time.'
-description: 'A technical log of HTB machines and challenges walkthroughs, personal scripts and projects, and my journey .'
-keywords:
-author: Kessentini Youssef
+description: 'Youssef Kessentini — Security Engineer & CTF player. A technical blog of HTB machines, challenges walkthroughs, personal security research, and hacking notes.'
+keywords: Youssef Kessentini, security engineer, CTF, HackTheBox, penetration testing, cybersecurity, writeups, reverse koat shell
+author: Youssef Kessentini
 language: en
 timezone: ''
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://0xkoat.github.io/reverse-koat-shell
+url: https://kessentini-youssef.dev
+root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:

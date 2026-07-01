@@ -1,15 +1,16 @@
 ---
-title: About
+title: "About Youssef Kessentini"
 date: 2025-01-01 00:00:00
 type: "about"
 cover: /img/banner.png
+description: "Youssef Kessentini — Security Engineer, CTF player, and author of Reverse Koat Shell blog."
 ---
 
-# Hey, I'm Youssef.
+# Youssef Kessentini
 
 A **Security Engineer** with a passion for breaking things and building them back better.
 
-I operate across offensive cybersecurity, full-stack development, and competitive programming — not because I have to, but because I genuinely can't stop.
+I'm **Youssef Kessentini**, and I operate across offensive cybersecurity, full-stack development, and competitive programming — not because I have to, but because I genuinely can't stop.
 
 ---
 
