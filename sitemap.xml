@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kessentini-youssef.dev/2026/07/11/CCTV/</loc>
+    
+    <lastmod>2026-07-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kessentini-youssef.dev/2026/07/01/Path-Traversal/</loc>
     
     <lastmod>2026-07-01</lastmod>
@@ -76,141 +85,197 @@
 
   <url>
     <loc>https://kessentini-youssef.dev/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://kessentini-youssef.dev/tags/HackTheBox/</loc>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/tags/Web/</loc>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/tags/LFI/</loc>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/tags/Brute-Force/</loc>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/tags/PDF-Injection/</loc>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://kessentini-youssef.dev/tags/Portswigger/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Web-Security/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Path-Traversal/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <loc>https://kessentini-youssef.dev/tags/HackTheBox/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Web/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/LFI/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Brute-Force/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/PDF-Injection/</loc>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Linux/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/RCE/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/CVE-2025-47812/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/CVE-2025-4517/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Wing-FTP/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Null-Byte-Injection/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Tarfile/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Privilege-Escalation/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Password-Cracking/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/tags/Welcome/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/SQL-Injection/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/CVE-2024-51482/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/CVE-2025-60787/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/ZoneMinder/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/motionEye/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Command-Injection/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Default-Creds/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/Credential-Cracking/</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -218,22 +283,22 @@
 
   
   <url>
-    <loc>https://kessentini-youssef.dev/categories/HackTheBox/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <loc>https://kessentini-youssef.dev/categories/Portswigger/</loc>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/categories/Portswigger/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <loc>https://kessentini-youssef.dev/categories/HackTheBox/</loc>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kessentini-youssef.dev/categories/Other/</loc>
-    <lastmod>2026-07-01</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

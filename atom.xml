@@ -10,7 +10,29 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-07-01T15:52:18.246Z</updated>
+  <updated>2026-07-11T16:46:18.775Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
+    <category term="Linux" scheme="https://kessentini-youssef.dev/tags/Linux/"/>
+    <category term="SQL Injection" scheme="https://kessentini-youssef.dev/tags/SQL-Injection/"/>
+    <category term="CVE-2024-51482" scheme="https://kessentini-youssef.dev/tags/CVE-2024-51482/"/>
+    <category term="CVE-2025-60787" scheme="https://kessentini-youssef.dev/tags/CVE-2025-60787/"/>
+    <category term="ZoneMinder" scheme="https://kessentini-youssef.dev/tags/ZoneMinder/"/>
+    <category term="motionEye" scheme="https://kessentini-youssef.dev/tags/motionEye/"/>
+    <category term="Command Injection" scheme="https://kessentini-youssef.dev/tags/Command-Injection/"/>
+    <category term="Default Creds" scheme="https://kessentini-youssef.dev/tags/Default-Creds/"/>
+    <category term="Credential Cracking" scheme="https://kessentini-youssef.dev/tags/Credential-Cracking/"/>
+    <id>https://kessentini-youssef.dev/2026/07/11/CCTV/</id>
+    <link href="https://kessentini-youssef.dev/2026/07/11/CCTV/"/>
+    <published>2026-07-11T16:30:00.000Z</published>
+    <summary>HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)</summary>
+    <title>CCTV</title>
+    <updated>2026-07-11T16:46:18.775Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
