@@ -10,7 +10,22 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-07-11T16:46:18.775Z</updated>
+  <updated>2026-07-21T19:38:29.703Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="Portswigger" scheme="https://kessentini-youssef.dev/categories/Portswigger/"/>
+    <category term="Portswigger" scheme="https://kessentini-youssef.dev/tags/Portswigger/"/>
+    <category term="Web Security" scheme="https://kessentini-youssef.dev/tags/Web-Security/"/>
+    <category term="CSRF" scheme="https://kessentini-youssef.dev/tags/CSRF/"/>
+    <id>https://kessentini-youssef.dev/2026/07/21/CSRF/</id>
+    <link href="https://kessentini-youssef.dev/2026/07/21/CSRF/"/>
+    <published>2026-07-21T20:00:00.000Z</published>
+    <summary>What I learned after completing CSRF path in Portswigger</summary>
+    <title>CSRF (Cross-Site Request Forgery)</title>
+    <updated>2026-07-21T19:38:29.703Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
@@ -31,7 +46,7 @@
     <published>2026-07-11T16:30:00.000Z</published>
     <summary>HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)</summary>
     <title>CCTV</title>
-    <updated>2026-07-11T16:46:18.775Z</updated>
+    <updated>2026-07-11T16:46:18.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -46,7 +61,7 @@
     <published>2026-07-01T15:51:00.000Z</published>
     <summary>What I learned after completing Path Traversal path in Portswigger</summary>
     <title>Path Traversal</title>
-    <updated>2026-07-01T15:52:18.246Z</updated>
+    <updated>2026-07-01T15:52:18.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -68,7 +83,7 @@
     <published>2026-06-25T11:00:00.000Z</published>
     <summary>HTB Easy Linux machine — Wing FTP RCE via Null Byte Injection (CVE-2025-47812), credential harvesting, and root via Python tarfile symlink bypass (CVE-2025-4517)</summary>
     <title>WingData</title>
-    <updated>2026-06-28T19:09:21.950Z</updated>
+    <updated>2026-06-28T19:09:21.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -85,7 +100,7 @@
     <published>2026-06-20T19:00:00.000Z</published>
     <summary>HTB Web challenge — Admin registration, 4-digit brute force, and Local File Inclusion via PhantomJS PDF rendering</summary>
     <title>Dark Runes</title>
-    <updated>2026-06-20T19:50:25.631Z</updated>
+    <updated>2026-06-20T19:50:25.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -100,7 +115,7 @@
     <published>2026-06-11T19:38:25.000Z</published>
     <summary>What I learned after completing SQL Injection path in Portswigger</summary>
     <title>SQL Injection</title>
-    <updated>2026-06-12T18:09:29.033Z</updated>
+    <updated>2026-06-12T18:09:29.000Z</updated>
   </entry>
   <entry>
     <author>
@@ -113,6 +128,6 @@
     <published>2026-06-06T21:50:00.000Z</published>
     <summary>Welcome to my cybersecurity blog.</summary>
     <title>Welcome to Reverse Koat Shell</title>
-    <updated>2026-06-11T20:02:28.664Z</updated>
+    <updated>2026-06-11T20:02:28.000Z</updated>
   </entry>
 </feed>
