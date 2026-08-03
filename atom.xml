@@ -10,7 +10,27 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-07-21T19:38:29.703Z</updated>
+  <updated>2026-08-03T16:37:51.840Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="Home Lab" scheme="https://kessentini-youssef.dev/categories/Home-Lab/"/>
+    <category term="SOC" scheme="https://kessentini-youssef.dev/tags/SOC/"/>
+    <category term="Wazuh" scheme="https://kessentini-youssef.dev/tags/Wazuh/"/>
+    <category term="Azure" scheme="https://kessentini-youssef.dev/tags/Azure/"/>
+    <category term="OPNsense" scheme="https://kessentini-youssef.dev/tags/OPNsense/"/>
+    <category term="MITRE ATT&amp;CK" scheme="https://kessentini-youssef.dev/tags/MITRE-ATT-CK/"/>
+    <category term="Home Lab" scheme="https://kessentini-youssef.dev/tags/Home-Lab/"/>
+    <id>https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/</id>
+    <link href="https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/"/>
+    <published>2026-08-03T16:20:00.000Z</published>
+    <summary>
+      <![CDATA[A hybrid SOC home lab spanning OPNsense and Azure, with Wazuh detecting — and sometimes missing — four MITRE ATT&CK-mapped attack scenarios]]>
+    </summary>
+    <title>SOC Home Lab Project</title>
+    <updated>2026-08-03T16:37:51.840Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>

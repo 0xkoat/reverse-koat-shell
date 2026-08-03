@@ -1,0 +1,879 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SOC Home Lab Project | Youssef Kessentini — Reverse Koat Shell</title><meta name="author" content="Youssef Kessentini"><meta name="copyright" content="Youssef Kessentini"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="A hybrid SOC home lab spanning OPNsense and Azure, with Wazuh detecting — and sometimes missing — four MITRE ATT&amp;CK-mapped attack scenarios">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOC Home Lab Project">
+<meta property="og:url" content="https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/">
+<meta property="og:site_name" content="Youssef Kessentini — Reverse Koat Shell">
+<meta property="og:description" content="A hybrid SOC home lab spanning OPNsense and Azure, with Wazuh detecting — and sometimes missing — four MITRE ATT&amp;CK-mapped attack scenarios">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kessentini-youssef.dev/img/soc-cover-wazuh.png">
+<meta property="article:published_time" content="2026-08-03T16:20:00.000Z">
+<meta property="article:modified_time" content="2026-08-03T16:37:51.840Z">
+<meta property="article:author" content="Youssef Kessentini">
+<meta property="article:tag" content="Azure">
+<meta property="article:tag" content="Home Lab">
+<meta property="article:tag" content="MITRE ATT&amp;CK">
+<meta property="article:tag" content="OPNsense">
+<meta property="article:tag" content="SOC">
+<meta property="article:tag" content="Wazuh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kessentini-youssef.dev/img/soc-cover-wazuh.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SOC Home Lab Project",
+  "url": "https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/",
+  "image": "https://kessentini-youssef.dev/img/soc-cover-wazuh.png",
+  "datePublished": "2026-08-03T16:20:00.000Z",
+  "dateModified": "2026-08-03T16:37:51.840Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Youssef Kessentini",
+      "url": "https://github.com/0xkoat"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.png"><link rel="canonical" href="https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;600;700&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"No results found for: ${query}","hits_stats":"${hits} articles found"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":400,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"Author: Youssef Kessentini","link":"Link: ","source":"Source: Youssef Kessentini — Reverse Koat Shell","info":"Copyright belongs to the author. For commercial use, please contact the author for authorization. For non-commercial use, please indicate the source."}},
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#9fef00","bgDark":"#1a2a1a","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SOC Home Lab Project',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="google-site-verification" content="rRa4aufVpnogE8yslZ22DTeTCHohhwetcyBS3-HMHHI" /><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Youssef Kessentini — Reverse Koat Shell" type="application/atom+xml">
+</head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">34</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/soc-cover-wazuh.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Youssef Kessentini — Reverse Koat Shell</span></a><a class="nav-page-title" href="/"><span class="site-name">SOC Home Lab Project</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">SOC Home Lab Project</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-08-03T16:20:00.000Z" title="Created 2026-08-03 17:20:00">2026-08-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-08-03T16:37:51.840Z" title="Updated 2026-08-03 17:37:51">2026-08-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Home-Lab/">Home Lab</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;This writeup is&quot;,&quot;messageNext&quot;:&quot;days old. Some techniques may be outdated.&quot;,&quot;postUpdate&quot;:&quot;2026-08-03 17:37:51&quot;}" hidden></div><p><code>OPNsense</code> · <code>Azure (VNet / NSG)</code> · <code>Wazuh 4.14</code> · <code>Docker</code> · <code>DVWA</code> · <code>Kali Linux</code> · <code>PowerShell</code> · <code>MITRE ATT&amp;CK</code> · <code>VirtualBox</code> · <code>Windows 11</code> · <code>Ubuntu 22.04</code> · <code>sqlmap</code> · <code>hydra</code> · <code>nmap</code></p>
+<h2 id="Executive-Summary"><a href="#Executive-Summary" class="headerlink" title="Executive Summary"></a>Executive Summary</h2><p>This project is a hybrid Security Operations Center home lab, built to demonstrate both sides of the job a SOC analyst actually does: designing and enforcing network segmentation, and then running real attacks against it to find and close the gaps in what the SIEM actually catches.</p>
+<p>The architecture splits deliberately across two environments. Network segmentation and endpoint control stay local, on VirtualBox behind an OPNsense firewall, mirroring how a real organization separates its internal network from everything else. The SIEM stack and the vulnerable&#x2F;attacker infrastructure (Wazuh, a Linux DMZ target, and a Kali attacker box) run on Azure. The two environments talk to each other only over the public internet, each independently enforcing its own default-deny model.</p>
+<p>Four attack scenarios were run against this environment, rising in complexity and mapped explicitly to MITRE ATT&amp;CK: network reconnaissance, an SSH credential-guessing attack, web application exploitation against DVWA (SQL injection, command injection, reflected XSS), and a Windows living-off-the-land technique chain. Every scenario followed the same loop: predict the expected detection outcome, attack, check the manager’s logs directly.</p>
+<p>The headline result is that I found three distinct, well-understood detection gaps: one structural (a host-based SIEM has no visibility into network-layer reconnaissance), one a genuine misconfiguration (a manager logging flag left at its default, silently invalidating a whole category of evidence until caught), and one a missing detection rule (a custom PowerShell&#x2F;LOLBin rule that I wrote, loaded, and proved catches two distinct techniques on first attempt). That loop (attack, predict, verify, diagnose, fix, re-verify) is the actual job, and it’s the throughline of this write-up.</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="MITRE-ATT-CK-Coverage"><a href="#MITRE-ATT-CK-Coverage" class="headerlink" title="MITRE ATT&amp;CK Coverage"></a>MITRE ATT&amp;CK Coverage</h2><table>
+<thead>
+<tr>
+<th>Technique ID</th>
+<th>Technique</th>
+<th>Scenario</th>
+<th>Tactic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>T1046</code></td>
+<td>Network Service Discovery</td>
+<td>1 · Recon &#x2F; Scanning</td>
+<td>Discovery</td>
+</tr>
+<tr>
+<td><code>T1110.001</code></td>
+<td>Password Guessing</td>
+<td>2 · SSH Brute Force</td>
+<td>Credential Access</td>
+</tr>
+<tr>
+<td><code>T1190</code></td>
+<td>Exploit Public-Facing Application</td>
+<td>3 · DVWA (SQLi &#x2F; Command Injection &#x2F; XSS)</td>
+<td>Initial Access</td>
+</tr>
+<tr>
+<td><code>T1105</code></td>
+<td>Ingress Tool Transfer</td>
+<td>4 · Windows LOTL (certutil)</td>
+<td>Command and Control</td>
+</tr>
+<tr>
+<td><code>T1059.001</code></td>
+<td>PowerShell</td>
+<td>4 · Windows LOTL (encoded command)</td>
+<td>Execution</td>
+</tr>
+<tr>
+<td><code>T1027</code></td>
+<td>Obfuscated Files or Information</td>
+<td>4 · Windows LOTL (encoded command)</td>
+<td>Defense Evasion</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Network-Architecture-—-A-Deep-Dive"><a href="#Network-Architecture-—-A-Deep-Dive" class="headerlink" title="Network Architecture — A Deep Dive"></a>Network Architecture — A Deep Dive</h2><p>Networking is the part of this project I wanted to get right the most, and it’s the piece that ends up doing double duty: it’s a real technical design decision, and it’s also the reason several of the most interesting findings in the attack scenarios exist at all. Two independent systems enforce segmentation here (OPNsense locally, Azure NSGs in the cloud), and the interesting part isn’t that they’re similar. It’s that they achieve the same goal from opposite starting points.</p>
+<h3 id="The-local-segment-—-OPNsense"><a href="#The-local-segment-—-OPNsense" class="headerlink" title="The local segment — OPNsense"></a>The local segment — OPNsense</h3><p>OPNsense is a free, FreeBSD-based firewall&#x2F;router OS (a fork of pfSense) using the <code>pf</code> packet filter engine, running as its own VirtualBox VM. Its only job is routing and filtering traffic between the lab’s local network segments.</p>
+<table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>VirtualBox network type</th>
+<th>IP address</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WAN</td>
+<td>NAT</td>
+<td>DHCP</td>
+<td>Internet access for OPNsense itself</td>
+</tr>
+<tr>
+<td>LAN</td>
+<td>Internal (<code>intnet:mgmt</code>)</td>
+<td>192.168.1.1&#x2F;24</td>
+<td>Management segment</td>
+</tr>
+<tr>
+<td>OPT1</td>
+<td>Internal (<code>intnet:internal</code>)</td>
+<td>192.168.2.1&#x2F;24</td>
+<td>Internal segment, Windows 11 endpoint</td>
+</tr>
+<tr>
+<td>OPT2</td>
+<td>Internal (<code>intnet:dmz</code>)</td>
+<td>192.168.3.1&#x2F;24</td>
+<td>DMZ segment, superseded by the cloud DMZ target</td>
+</tr>
+<tr>
+<td>OPT3</td>
+<td>Host-only</td>
+<td>192.168.56.2&#x2F;24</td>
+<td>Laptop → OPNsense GUI&#x2F;SSH access</td>
+</tr>
+</tbody></table>
+<p>The key design decision: <strong>every interface except LAN starts completely blank (default-deny, nothing passes, not even ping) until an explicit Pass rule is added.</strong> Only LAN gets an automatic allow-all rule at install. This is what makes the segmentation meaningful rather than cosmetic: a compromised device on one segment genuinely cannot reach another unless a rule explicitly says so.</p>
+<h3 id="The-cloud-segment-—-Azure-NSGs"><a href="#The-cloud-segment-—-Azure-NSGs" class="headerlink" title="The cloud segment — Azure NSGs"></a>The cloud segment — Azure NSGs</h3><p>The Azure side (<code>soc-network</code> VNet, <code>10.0.0.0/16</code>, three subnets: <code>mgmt-subnet</code>, <code>dmz-subnet</code>, <code>attacker-subnet</code>) is designed to mirror the same default-deny philosophy. But Azure’s Network Security Groups start from the <em>opposite</em> default than OPNsense does, and missing that distinction is a real, easy-to-make mistake:</p>
+<blockquote>
+<p>⚠️ <strong>Azure NSGs ship with a built-in <code>AllowVnetInBound</code> rule at priority 65000, permitting all intra-VNet traffic by default.</strong> Unlike OPNsense’s blank slate, segmentation between subnets in the same VNet has to be <em>added back in</em>: an explicit <code>Deny-VNet-Default</code> rule at a lower priority than 65000 is required on every NSG, or every VM in the VNet can freely reach every other VM regardless of anything else configured.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Name</th>
+<th>Source</th>
+<th>Port</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>Allow-DVWA-Attacker</td>
+<td><code>10.0.3.0/24</code></td>
+<td>80</td>
+<td>Allow</td>
+</tr>
+<tr>
+<td>102</td>
+<td>Allow-DVWA-HomeIP</td>
+<td>home IP <code>/32</code></td>
+<td>80</td>
+<td>Allow</td>
+</tr>
+<tr>
+<td>105</td>
+<td>Allow-SSH-HomeIP</td>
+<td>home IP <code>/32</code></td>
+<td>22</td>
+<td>Allow</td>
+</tr>
+<tr>
+<td>120</td>
+<td><strong>Deny-VNet-Default</strong></td>
+<td>VirtualNetwork</td>
+<td>*</td>
+<td><strong>Deny</strong></td>
+</tr>
+</tbody></table>
+<p><em>(<code>dmz-nsg</code> shown above; <code>mgmt-nsg</code> and <code>attacker-nsg</code> follow the identical pattern: narrowly-scoped Allow rules for specific sources and ports, backstopped by the same <code>Deny-VNet-Default</code> at priority 120.)</em></p>
+<hr>
+<h2 id="Build-Summary"><a href="#Build-Summary" class="headerlink" title="Build Summary"></a>Build Summary</h2><p>This table is the reference.</p>
+<h3 id="Azure-VM-inventory"><a href="#Azure-VM-inventory" class="headerlink" title="Azure VM inventory"></a>Azure VM inventory</h3><table>
+<thead>
+<tr>
+<th>VM</th>
+<th>Subnet</th>
+<th>Private IP</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>wazuh-manager</code></td>
+<td>mgmt-subnet</td>
+<td>10.0.1.4</td>
+<td>SIEM, Wazuh 4.14, all-in-one</td>
+</tr>
+<tr>
+<td><code>dmz-target</code></td>
+<td>dmz-subnet</td>
+<td>10.0.2.4</td>
+<td>Vulnerable target (DVWA via Docker), Wazuh agent 001</td>
+</tr>
+<tr>
+<td><code>kali-attacker</code></td>
+<td>attacker-subnet</td>
+<td>10.0.3.4</td>
+<td>Attack box</td>
+</tr>
+</tbody></table>
+<h3 id="Full-endpoint-inventory"><a href="#Full-endpoint-inventory" class="headerlink" title="Full endpoint inventory"></a>Full endpoint inventory</h3><table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Location</th>
+<th>Agent ID</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>wazuh-manager</code></td>
+<td>Azure (mgmt-subnet)</td>
+<td>—</td>
+<td>SIEM, running</td>
+</tr>
+<tr>
+<td><code>dmz-target</code></td>
+<td>Azure (dmz-subnet)</td>
+<td>001</td>
+<td>Active</td>
+</tr>
+<tr>
+<td><code>kali-attacker</code></td>
+<td>Azure (attacker-subnet)</td>
+<td>—</td>
+<td>Segmentation verified</td>
+</tr>
+<tr>
+<td>Windows 11 Endpoint</td>
+<td>Local (OPT1)</td>
+<td>002</td>
+<td>Active</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Attack-Scenarios"><a href="#Attack-Scenarios" class="headerlink" title="Attack Scenarios"></a>Attack Scenarios</h2><p>Four scenarios, rising in complexity, each mapped to MITRE ATT&amp;CK. Every one followed the same loop: predict the expected outcome → attack → check the manager’s <code>alerts.log</code> directly (the authoritative source) → corroborate in the dashboard → record a verdict → fix what’s fixable → re-test.</p>
+<h3 id="Scenario-1-—-Recon-Scanning"><a href="#Scenario-1-—-Recon-Scanning" class="headerlink" title="Scenario 1 — Recon &#x2F; Scanning"></a>Scenario 1 — Recon &#x2F; Scanning</h3><p><strong>Technique:</strong> <code>T1046</code> – Network Service Discovery · <strong>Tool:</strong> <code>nmap -sC -sV -Pn</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -sC -sV -Pn 10.0.2.4          <span class="comment"># private IP, from Kali</span></span><br><span class="line">nmap -sC -sV -Pn 158.158.34.78     <span class="comment"># public IP, for comparison</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario1-nmap.png" alt="nmap scan results against the DMZ target&#39;s private and public IPs" loading='lazy'></p>
+<p><strong>Results:</strong></p>
+<ul>
+<li>Private IP: <code>22/tcp open (ssh)</code>, <code>80/tcp open (http, DVWA)</code>, <code>3000/tcp closed</code>, 997 filtered</li>
+<li>Public IP: all 1000 ports filtered</li>
+</ul>
+<p>Checking the manager:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -iE <span class="string">&quot;10.0.3.4&quot;</span> /var/ossec/logs/archives/archives.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario1-archives-empty.png" alt="Empty archives.log after the nmap scan" loading='lazy'></p>
+<blockquote>
+<p>🔴 <strong>Detected? Missed.</strong> Expected, not a misconfiguration. Wazuh is host-based (HIDS); it has no visibility into inbound network connection attempts that don’t generate a log entry the agent watches.<br>Detecting this class of activity would require a network-layer component (Suricata&#x2F;Zeek), out of scope for this build. Documented as a known limitation rather than remediated.</p>
+</blockquote>
+<hr>
+<h3 id="Scenario-2-—-SSH-Brute-Force"><a href="#Scenario-2-—-SSH-Brute-Force" class="headerlink" title="Scenario 2 — SSH Brute Force"></a>Scenario 2 — SSH Brute Force</h3><p><strong>Technique:</strong> <code>T1110.001</code> – Password Guessing · <strong>Tool:</strong> <code>hydra</code></p>
+<p><code>dmz-target</code>‘s <code>sshd_config</code> turned out to already have <code>PasswordAuthentication yes</code><br><code>azureuser</code>‘s password was set to a deliberately weak value for the duration of this scenario only, reset immediately afterward.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -l azureuser -P /tmp/passlist.txt ssh://10.0.2.4 -t 4</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario2-hydra.png" alt="hydra SSH brute force run against the DMZ target" loading='lazy'></p>
+<p>Succeeded in 3 failed attempts before the hit: the weak password was the 4th entry in a 6-word test list, found quickly via 4 parallel connection attempts rather than a long sequential grind.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -iE <span class="string">&quot;5710|5716|5720|sshd&quot;</span> /var/ossec/logs/alerts/alerts.log | <span class="built_in">tail</span> -40</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario2-archives.png" alt="alerts.log entries for the SSH brute force attempts" loading='lazy'></p>
+<p><img src="/img/soc-scenario2-dashboard.png" alt="Wazuh dashboard view of the SSH authentication alerts" loading='lazy'></p>
+<hr>
+<h3 id="Scenario-3-—-DVWA-Web-Exploitation"><a href="#Scenario-3-—-DVWA-Web-Exploitation" class="headerlink" title="Scenario 3 — DVWA Web Exploitation"></a>Scenario 3 — DVWA Web Exploitation</h3><p><strong>Technique:</strong> <code>T1190</code> – Exploit Public-Facing Application · <strong>Sub-techniques:</strong> SQL Injection (CWE-89), Command Injection (CWE-78), Reflected XSS (CWE-79) · <strong>Tools:</strong> <code>curl</code>, <code>sqlmap</code></p>
+<p>Before attacking, I checked <code>dmz-target</code>‘s <code>ossec.conf</code> and found its <code>&lt;localfile&gt;</code> entries cover host-level sources only: nothing references Apache, DVWA, or Docker. DVWA runs in a container; its logs go to the container’s own stdout&#x2F;stderr, invisible to a default host-based agent config.</p>
+<p>I flagged this as a single structural gap <em>before</em> attacking, predicted to affect all three sub-techniques for the same reason.</p>
+<h4 id="SQL-injection"><a href="#SQL-injection" class="headerlink" title="SQL injection"></a>SQL injection</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://10.0.2.4/vulnerabilities/sqli/?id=1&amp;Submit=Submit#&quot;</span> \</span><br><span class="line">  --cookie=<span class="string">&quot;PHPSESSID=...; security=low&quot;</span> --batch --dump -D dvwa -T <span class="built_in">users</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario3-sqli.png" alt="sqlmap dumping the DVWA users table via SQL injection" loading='lazy'></p>
+<h4 id="Command-injection"><a href="#Command-injection" class="headerlink" title="Command injection"></a>Command injection</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -b dvwa_cookies.txt -d <span class="string">&quot;ip=127.0.0.1%3Bwhoami&amp;Submit=Submit&amp;user_token=...&quot;</span> \</span><br><span class="line">  http://10.0.2.4/vulnerabilities/exec/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario3-command-injection-1.png" alt="Command injection request against DVWA&#39;s exec vulnerability" loading='lazy'></p>
+<p><img src="/img/soc-scenario3-command-injection-2.png" alt="Command injection response showing whoami output" loading='lazy'></p>
+<h4 id="Reflected-XSS"><a href="#Reflected-XSS" class="headerlink" title="Reflected XSS"></a>Reflected XSS</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -b dvwa_cookies.txt <span class="string">&quot;http://10.0.2.4/vulnerabilities/xss_r/?name=&lt;script&gt;alert(document.cookie)&lt;/script&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario3-xss.png" alt="Reflected XSS payload against DVWA" loading='lazy'></p>
+<h4 id="Detection-—-initial-pass"><a href="#Detection-—-initial-pass" class="headerlink" title="Detection — initial pass"></a>Detection — initial pass</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -iE <span class="string">&quot;sqlmap|UNION|xss_r|vulnerabilities/exec&quot;</span> /var/ossec/logs/alerts/alerts.log</span><br><span class="line"><span class="built_in">sudo</span> grep -i <span class="string">&quot;vulnerabilities&quot;</span> /var/ossec/logs/archives/archives.log</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🔴 <strong>Detected? Missed, all three.</strong> <code>alerts.log</code> produced no genuine matches, both grep attempts only matched the sudo audit trail of the grep command itself, the same self-referential false-positive pattern that shows up repeatedly across this project. <code>archives.log</code> came back completely empty across the full test window, with no self-match risk this time, confirming zero events were forwarded at all.</p>
+</blockquote>
+<h4 id="Root-cause-and-fix"><a href="#Root-cause-and-fix" class="headerlink" title="Root cause and fix"></a>Root cause and fix</h4><p><code>ossec.conf</code>‘s <code>&lt;localfile&gt;</code> entries monitor host-level sources only, as predicted before attacking. Fix: a <code>full_command</code> localfile polling <code>docker logs dvwa --since 20s</code> every 15 seconds, plus enabling <code>&lt;logall&gt;yes&lt;/logall&gt;</code> on the manager. It turned out this had been at its default (<code>no</code>) the entire time, silently limiting what <code>archives.log</code> could ever show across every earlier scenario too.</p>
+<h4 id="Re-test"><a href="#Re-test" class="headerlink" title="Re-test"></a>Re-test</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -i <span class="string">&quot;sqli&quot;</span> /var/ossec/logs/archives/archives.log | <span class="built_in">tail</span> -5</span><br><span class="line"><span class="comment"># 10.0.3.4 - - [..] &quot;GET /vulnerabilities/sqli/?id=1%27+OR+%271%27%3D%271&amp;Submit=Submit HTTP/1.1&quot; 200 5098</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> grep -i <span class="string">&quot;exec\|whoami&quot;</span> /var/ossec/logs/archives/archives.log | <span class="built_in">tail</span> -20</span><br><span class="line"><span class="comment"># 10.0.3.4 - - [..] &quot;POST /vulnerabilities/exec/ HTTP/1.1&quot; 200 4880</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🟡 <strong>Detected? Visibility restored, partially.</strong> The Docker fix works, but its coverage is uneven by attack type, which is a property of Apache’s default log format, not a flaw in the fix.<br>GET-based attacks (SQLi, XSS, payload in the URL) are now fully visible end-to-end: the complete injection string reaches <code>archives.log</code> intact. POST-based attacks (command injection, payload in the body) are visible as “a request happened” but not what it contained, since standard Apache access-log format never includes POST bodies. No sub-technique yet reaches <code>alerts.log</code>: raw access-log text arriving via a generic <code>full_command</code> source has no decoder mapping it to HTTP traffic, so nothing currently matches a rule even where the data genuinely arrives.</p>
+</blockquote>
+<hr>
+<h3 id="Scenario-4-—-Windows-Living-off-the-Land-LOTL"><a href="#Scenario-4-—-Windows-Living-off-the-Land-LOTL" class="headerlink" title="Scenario 4 — Windows Living-off-the-Land (LOTL)"></a>Scenario 4 — Windows Living-off-the-Land (LOTL)</h3><p><strong>Techniques:</strong> <code>T1105</code> – Ingress Tool Transfer, <code>T1059.001</code> – PowerShell, <code>T1027</code> – Obfuscated Files or Information · <strong>Tools:</strong> <code>certutil.exe</code>, <code>powershell -enc</code></p>
+<h4 id="T1105-—-certutil-ingress-tool-transfer"><a href="#T1105-—-certutil-ingress-tool-transfer" class="headerlink" title="T1105 — certutil (ingress tool transfer)"></a>T1105 — certutil (ingress tool transfer)</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil <span class="literal">-urlcache</span> <span class="operator">-split</span> <span class="operator">-f</span> https://www.microsoft.com/robots.txt C:\Windows\Temp\lolbin_test.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario4-certutil.png" alt="certutil used as a LOLBin to download a file" loading='lazy'></p>
+<h4 id="Initial-detection"><a href="#Initial-detection" class="headerlink" title="Initial detection"></a>Initial detection</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -i <span class="string">&quot;certutil\|lolbin_test&quot;</span> /var/ossec/logs/archives/archives.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/soc-scenario4-certutil-archive.png" alt="archives.log entry for the PowerShell script block running certutil" loading='lazy'></p>
+<p><strong>Important nuance:</strong> this wasn’t captured because <code>certutil</code> generates process-creation telemetry; it doesn’t, and no Sysmon or native 4688 command-line auditing is deployed in this build. It was captured because the command was typed <em>at a PowerShell prompt</em>, and script block logging records whatever PowerShell is asked to run, including invocations of external binaries.</p>
+<p>That means detection here is contingent on the LOLBin being launched from inside PowerShell specifically. The identical technique from <code>cmd.exe</code>, a scheduled task, or a non-PowerShell parent process would leave no equivalent trace in this build.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> grep -i <span class="string">&quot;certutil\|lolbin_test&quot;</span> /var/ossec/logs/alerts/alerts.log</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🔴 <strong>Alerted? No.</strong> Real telemetry reached the manager, but Wazuh’s default PowerShell ruleset doesn’t flag a plain certutil invocation. No rule matches that pattern out of the box.</p>
+</blockquote>
+<h4 id="Remediation-—-a-custom-detection-rule"><a href="#Remediation-—-a-custom-detection-rule" class="headerlink" title="Remediation — a custom detection rule"></a>Remediation — a custom detection rule</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">rule</span> <span class="attr">id</span>=<span class="string">&quot;100100&quot;</span> <span class="attr">level</span>=<span class="string">&quot;12&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">if_group</span>&gt;</span>windows<span class="tag">&lt;/<span class="name">if_group</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;win.eventdata.scriptBlockText&quot;</span> <span class="attr">type</span>=<span class="string">&quot;pcre2&quot;</span>&gt;</span>(?i)(certutil.*urlcache|bitsadmin|mshta|IEX|Invoke-Expression|DownloadString|-enc |-encodedcommand)<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>Suspicious PowerShell / LOLBin activity detected in script block<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">mitre</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1105<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1059.001<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>T1027<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">mitre</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Loaded into <code>local_rules.xml</code>, manager restarted, identical certutil command re-run.</p>
+<p><img src="/img/soc-scenario4-certutil-dashboard.png" alt="Wazuh dashboard alert after loading the custom detection rule" loading='lazy'></p>
+<p><img src="/img/soc-scenario4-certutil-dashboard-2.png" alt="Custom rule alert detail with MITRE ATT&amp;CK fields populated" loading='lazy'></p>
+<blockquote>
+<p>🟢 <strong>Detected? Yes, after remediation.</strong> Correct <code>scriptBlockText</code>, correct rule ID, MITRE fields populated with all three technique IDs and their tactics (Command and Control, Execution, Defense Evasion), confirmed via the raw alert document, not just the dashboard view.</p>
+</blockquote>
+<h4 id="T1059-001-T1027-—-encoded-command"><a href="#T1059-001-T1027-—-encoded-command" class="headerlink" title="T1059.001 &#x2F; T1027 — encoded command"></a>T1059.001 &#x2F; T1027 — encoded command</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$command</span> = <span class="string">&#x27;Write-Host &quot;LOTL-test-encoded-payload&quot;&#x27;</span></span><br><span class="line"><span class="variable">$bytes</span> = [<span class="type">System.Text.Encoding</span>]::Unicode.GetBytes(<span class="variable">$command</span>)</span><br><span class="line"><span class="variable">$encoded</span> = [<span class="type">Convert</span>]::ToBase64String(<span class="variable">$bytes</span>)</span><br><span class="line">powershell <span class="literal">-enc</span> <span class="variable">$encoded</span></span><br></pre></td></tr></table></figure>
+
+<p>Ran without any additional rule changes, since the existing pattern already covers <code>-enc </code>.</p>
+<p><img src="/img/soc-scenario4-encoded-command.png" alt="Encoded PowerShell command executed on the Windows endpoint" loading='lazy'></p>
+<p><img src="/img/soc-scenario4-encoded-command-archive.png" alt="archives.log showing both the encoded and auto-decoded script block events" loading='lazy'></p>
+<p>Two separate scriptblock events generated per run: the literal typed command (<code>powershell -enc $encoded</code>), and a second, separate event containing the auto-decoded true payload, a deliberate Microsoft anti-evasion behavior that logs the real command regardless of base64 obfuscation. Only the first event contains the <code>-enc </code> pattern and matches the rule.</p>
+<p><img src="/img/soc-scenario4-encoded-command-dashboard1.png" alt="Wazuh dashboard alert for the encoded command, first view" loading='lazy'></p>
+<p><img src="/img/soc-scenario4-encoded-command-dashboard2.png" alt="Wazuh dashboard alert for the encoded command, detail view" loading='lazy'></p>
+<blockquote>
+<p>🟢 <strong>Detected? Yes.</strong> Same rule, no modification, caught a second, distinct technique on first attempt.</p>
+</blockquote>
+<hr>
+<h2 id="Lessons-Learned"><a href="#Lessons-Learned" class="headerlink" title="Lessons Learned"></a>Lessons Learned</h2><blockquote>
+<p>🔑 <strong>Azure NSG rules scoped to a private-subnet CIDR do not extend to that same host’s public IP.</strong> Traffic to a public IP routes through Azure’s edge, not the VNet backbone, and gets evaluated against the implicit default-deny instead. The same host, same NSG, can present completely different exposure depending on which address is used.</p>
+<p><strong>A manager’s <code>logall</code> flag being off doesn’t just mean “less logging”; it silently invalidates an entire category of evidence.</strong> An empty <code>archives.log</code> with <code>logall</code> disabled proves nothing about visibility; it only means nothing matched an alert rule, which <code>alerts.log</code> already covers. This cost real time to catch, well after several scenarios had already been run against a manager quietly missing this flag.</p>
+<p><strong>The Wazuh dashboard only indexes alerted events; raw archived telemetry isn’t searchable in the UI, even with <code>logall</code> on.</strong> A technique can have full, genuine visibility on the manager and still show zero results in the dashboard, because indexing requires a rule match. Manual log inspection on the manager remains the more authoritative check, every time.</p>
+<p><strong>Searching <code>alerts.log</code> for attack-related keywords can self-match your own command history.</strong> Wazuh logs the sudo audit trail of the search command itself: if your search term appears in the command you typed, it matches its own grep. This exact trap recurred in three separate scenarios before the pattern was recognized and worked around by filtering on <code>rule.groups</code>&#x2F;<code>rule.id</code> instead of free-text search.</p>
+<p><strong>PowerShell script block logging captures the literal command line typed at the prompt, including invocations of external binaries like <code>certutil</code>, but this is not process-creation telemetry.</strong> Detection of a LOLBin technique here is contingent on it being launched from inside PowerShell specifically; the same technique from <code>cmd.exe</code> or a non-PowerShell parent process would leave no equivalent trace in this build.</p>
+<p><strong>Apache’s default access log format never includes POST request bodies.</strong> Fixing container log visibility restores full end-to-end visibility for GET-based attacks (payload in the URL) but only proves “a request happened,” not its content, for POST-based attacks like command injection, a distinct, separate gap.</p>
+<p><strong>Wazuh’s default sshd ruleset alerts every individual authentication event, but only escalates to a distinct brute-force alert past a frequency threshold.</strong> A fast, successful credential guess that stays under that threshold is fully visible event-by-event but never flagged as anomalous. “Every event logged” and “attack pattern recognized” are meaningfully different levels of detection maturity.</p>
+</blockquote>
+<hr>
+<h2 id="Closing-Thoughts"><a href="#Closing-Thoughts" class="headerlink" title="Closing Thoughts"></a>Closing Thoughts</h2><p>The result I set out to prove wasn’t “this SIEM catches everything.” It was that I can build a realistic, segmented environment, reason correctly about how two different systems enforce the same security goal from different defaults, run genuine attacks against my own infrastructure, and when something doesn’t get caught, figure out precisely why and fix it. Three of the four scenarios exposed a real gap. Two of those gaps got fixed live, with proof. The one that didn’t (the structural HIDS&#x2F;NIDS boundary in Scenario 1) is exactly the kind of limitation a real analyst needs to be able to name accurately rather than paper over.</p>
+<p>That loop (predict, test, verify, diagnose, fix, re-verify) is the whole job. This project is a small, honest demonstration of it, end to end.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/0xkoat">Youssef Kessentini</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/">https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SOC/">SOC</a><a class="post-meta__tags" href="/tags/Wazuh/">Wazuh</a><a class="post-meta__tags" href="/tags/Azure/">Azure</a><a class="post-meta__tags" href="/tags/OPNsense/">OPNsense</a><a class="post-meta__tags" href="/tags/MITRE-ATT-CK/">MITRE ATT&amp;CK</a><a class="post-meta__tags" href="/tags/Home-Lab/">Home Lab</a></div><div class="post-share"><div class="social-share" data-image="/img/soc-cover-wazuh.png" data-sites="x,reddit,telegram,email"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/21/CSRF/" title="CSRF (Cross-Site Request Forgery)"><img class="cover" src="/img/csrf-cover.png" onerror="onerror=null;src='/img/banner.png'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">CSRF (Cross-Site Request Forgery)</div></div><div class="info-2"><div class="info-item-1">What I learned after completing CSRF path in Portswigger</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comments</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">Youssef Kessentini</div><div class="author-info-description">Security researcher & CTF player. Escalating privileges one machine at a time.</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">34</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/0xkoat" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #ffffff;"></i></a><a class="social-icon" href="https://app.hackthebox.com/public/users/3132736" target="_blank" title="HackTheBox"><i class="fas fa-cube" style="color: #9fef00;"></i></a><a class="social-icon" href="https://www.linkedin.com/in/kessentini-youssef-pro/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin" style="color: #0077b5;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">🚩 New writeups every week! HTB machines, CTF challenges, and more.</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Executive-Summary"><span class="toc-number">1.</span> <span class="toc-text">Executive Summary</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MITRE-ATT-CK-Coverage"><span class="toc-number">2.</span> <span class="toc-text">MITRE ATT&amp;CK Coverage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-Architecture-%E2%80%94-A-Deep-Dive"><span class="toc-number">3.</span> <span class="toc-text">Network Architecture — A Deep Dive</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-local-segment-%E2%80%94-OPNsense"><span class="toc-number">3.1.</span> <span class="toc-text">The local segment — OPNsense</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-cloud-segment-%E2%80%94-Azure-NSGs"><span class="toc-number">3.2.</span> <span class="toc-text">The cloud segment — Azure NSGs</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-Summary"><span class="toc-number">4.</span> <span class="toc-text">Build Summary</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure-VM-inventory"><span class="toc-number">4.1.</span> <span class="toc-text">Azure VM inventory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Full-endpoint-inventory"><span class="toc-number">4.2.</span> <span class="toc-text">Full endpoint inventory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Attack-Scenarios"><span class="toc-number">5.</span> <span class="toc-text">Attack Scenarios</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-1-%E2%80%94-Recon-Scanning"><span class="toc-number">5.1.</span> <span class="toc-text">Scenario 1 — Recon &#x2F; Scanning</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-2-%E2%80%94-SSH-Brute-Force"><span class="toc-number">5.2.</span> <span class="toc-text">Scenario 2 — SSH Brute Force</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-3-%E2%80%94-DVWA-Web-Exploitation"><span class="toc-number">5.3.</span> <span class="toc-text">Scenario 3 — DVWA Web Exploitation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SQL-injection"><span class="toc-number">5.3.1.</span> <span class="toc-text">SQL injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Command-injection"><span class="toc-number">5.3.2.</span> <span class="toc-text">Command injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reflected-XSS"><span class="toc-number">5.3.3.</span> <span class="toc-text">Reflected XSS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Detection-%E2%80%94-initial-pass"><span class="toc-number">5.3.4.</span> <span class="toc-text">Detection — initial pass</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Root-cause-and-fix"><span class="toc-number">5.3.5.</span> <span class="toc-text">Root cause and fix</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Re-test"><span class="toc-number">5.3.6.</span> <span class="toc-text">Re-test</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-4-%E2%80%94-Windows-Living-off-the-Land-LOTL"><span class="toc-number">5.4.</span> <span class="toc-text">Scenario 4 — Windows Living-off-the-Land (LOTL)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#T1105-%E2%80%94-certutil-ingress-tool-transfer"><span class="toc-number">5.4.1.</span> <span class="toc-text">T1105 — certutil (ingress tool transfer)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initial-detection"><span class="toc-number">5.4.2.</span> <span class="toc-text">Initial detection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Remediation-%E2%80%94-a-custom-detection-rule"><span class="toc-number">5.4.3.</span> <span class="toc-text">Remediation — a custom detection rule</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#T1059-001-T1027-%E2%80%94-encoded-command"><span class="toc-number">5.4.4.</span> <span class="toc-text">T1059.001 &#x2F; T1027 — encoded command</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lessons-Learned"><span class="toc-number">6.</span> <span class="toc-text">Lessons Learned</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Closing-Thoughts"><span class="toc-number">7.</span> <span class="toc-text">Closing Thoughts</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/08/03/SOC-Home-Lab-Project/" title="SOC Home Lab Project"><img src="/img/soc-cover-wazuh.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="SOC Home Lab Project"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/08/03/SOC-Home-Lab-Project/" title="SOC Home Lab Project">SOC Home Lab Project</a><time datetime="2026-08-03T16:20:00.000Z" title="Created 2026-08-03 17:20:00">2026-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/21/CSRF/" title="CSRF (Cross-Site Request Forgery)"><img src="/img/csrf-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="CSRF (Cross-Site Request Forgery)"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/21/CSRF/" title="CSRF (Cross-Site Request Forgery)">CSRF (Cross-Site Request Forgery)</a><time datetime="2026-07-21T20:00:00.000Z" title="Created 2026-07-21 21:00:00">2026-07-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/11/CCTV/" title="CCTV"><img src="/img/cctv-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="CCTV"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/11/CCTV/" title="CCTV">CCTV</a><time datetime="2026-07-11T16:30:00.000Z" title="Created 2026-07-11 17:30:00">2026-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/01/Path-Traversal/" title="Path Traversal"><img src="/img/path-traversal-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="Path Traversal"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/01/Path-Traversal/" title="Path Traversal">Path Traversal</a><time datetime="2026-07-01T15:51:00.000Z" title="Created 2026-07-01 16:51:00">2026-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/25/WingData/" title="WingData"><img src="/img/wingdata-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="WingData"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/06/25/WingData/" title="WingData">WingData</a><time datetime="2026-06-25T11:00:00.000Z" title="Created 2026-06-25 12:00:00">2026-06-25</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Youssef Kessentini</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div><div class="footer_custom_text"><span>root@reversekoatshell:~#&nbsp;</span><span style="color:#9fef00">_</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll to Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': '0xkoat/reverse-koat-shell',
+      'data-repo-id': 'R_kgDOSzIULQ',
+      'data-category-id': 'DIC_kwDOSzIULc4C--IV',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script id="canvas_nest" defer="defer" color="0,255,0" opacity="0.15" zIndex="-1" count="80" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading Database</span></div><div class="local-search-input"><input placeholder="Search writeups, machines, flags..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5-b1"></script></div></div></body></html>
