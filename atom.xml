@@ -10,7 +10,22 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-08-03T16:37:51.840Z</updated>
+  <updated>2026-08-29T11:22:10.407Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="Portswigger" scheme="https://kessentini-youssef.dev/categories/Portswigger/"/>
+    <category term="Command Injection" scheme="https://kessentini-youssef.dev/tags/Command-Injection/"/>
+    <category term="Portswigger" scheme="https://kessentini-youssef.dev/tags/Portswigger/"/>
+    <category term="Web Security" scheme="https://kessentini-youssef.dev/tags/Web-Security/"/>
+    <id>https://kessentini-youssef.dev/2026/08/29/Command-Injection/</id>
+    <link href="https://kessentini-youssef.dev/2026/08/29/Command-Injection/"/>
+    <published>2026-08-29T11:00:00.000Z</published>
+    <summary>What I learned after completing the OS Command Injection path in Portswigger</summary>
+    <title>OS Command Injection</title>
+    <updated>2026-08-29T11:22:10.407Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
