@@ -10,17 +10,37 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-09-16T15:50:56.792Z</updated>
+  <updated>2026-09-22T18:32:39.057Z</updated>
+  <entry>
+    <author>
+      <name>Youssef Kessentini</name>
+    </author>
+    <category term="CTF" scheme="https://kessentini-youssef.dev/categories/CTF/"/>
+    <category term="CTF" scheme="https://kessentini-youssef.dev/tags/CTF/"/>
+    <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
+    <category term="Forensics" scheme="https://kessentini-youssef.dev/tags/Forensics/"/>
+    <category term="OSINT" scheme="https://kessentini-youssef.dev/tags/OSINT/"/>
+    <category term="Misc" scheme="https://kessentini-youssef.dev/tags/Misc/"/>
+    <category term="JWT" scheme="https://kessentini-youssef.dev/tags/JWT/"/>
+    <category term="Steganography" scheme="https://kessentini-youssef.dev/tags/Steganography/"/>
+    <category term="Python" scheme="https://kessentini-youssef.dev/tags/Python/"/>
+    <id>https://kessentini-youssef.dev/2026/09/22/CSAW-CTF-2026/</id>
+    <link href="https://kessentini-youssef.dev/2026/09/22/CSAW-CTF-2026/"/>
+    <published>2026-09-22T08:00:00.000Z</published>
+    <summary>CSAW CTF Quals 2026: eight writeups across Web, Forensics, OSINT, and Misc, from JWT x5c forgery and a Caddy forward-auth bypass to pixel steganography and a three-platform OSINT chase</summary>
+    <title>CSAW CTF Quals 2026</title>
+    <updated>2026-09-22T18:32:39.057Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
     </author>
     <category term="CTF" scheme="https://kessentini-youssef.dev/categories/CTF/"/>
     <category term="SQL Injection" scheme="https://kessentini-youssef.dev/tags/SQL-Injection/"/>
-    <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
     <category term="CTF" scheme="https://kessentini-youssef.dev/tags/CTF/"/>
-    <category term="Blind SQLi" scheme="https://kessentini-youssef.dev/tags/Blind-SQLi/"/>
+    <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
     <category term="Python" scheme="https://kessentini-youssef.dev/tags/Python/"/>
+    <category term="Blind SQLi" scheme="https://kessentini-youssef.dev/tags/Blind-SQLi/"/>
     <category term="Pickle" scheme="https://kessentini-youssef.dev/tags/Pickle/"/>
     <category term="Deserialization" scheme="https://kessentini-youssef.dev/tags/Deserialization/"/>
     <category term="PHP" scheme="https://kessentini-youssef.dev/tags/PHP/"/>
