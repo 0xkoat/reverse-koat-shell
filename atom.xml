@@ -10,12 +10,12 @@
   <rights>All rights reserved 2026, Youssef Kessentini</rights>
   <subtitle>Escalating privileges, one write-up at a time.</subtitle>
   <title>Youssef Kessentini — Reverse Koat Shell</title>
-  <updated>2026-09-22T18:32:39.057Z</updated>
+  <updated>2026-09-22T19:46:41.660Z</updated>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="CTF" scheme="https://kessentini-youssef.dev/categories/CTF/"/>
+    <category term="CTF Writeups" scheme="https://kessentini-youssef.dev/categories/CTF-Writeups/"/>
     <category term="CTF" scheme="https://kessentini-youssef.dev/tags/CTF/"/>
     <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
     <category term="Forensics" scheme="https://kessentini-youssef.dev/tags/Forensics/"/>
@@ -29,13 +29,13 @@
     <published>2026-09-22T08:00:00.000Z</published>
     <summary>CSAW CTF Quals 2026: eight writeups across Web, Forensics, OSINT, and Misc, from JWT x5c forgery and a Caddy forward-auth bypass to pixel steganography and a three-platform OSINT chase</summary>
     <title>CSAW CTF Quals 2026</title>
-    <updated>2026-09-22T18:32:39.057Z</updated>
+    <updated>2026-09-22T19:46:41.660Z</updated>
   </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="CTF" scheme="https://kessentini-youssef.dev/categories/CTF/"/>
+    <category term="CTF Writeups" scheme="https://kessentini-youssef.dev/categories/CTF-Writeups/"/>
     <category term="SQL Injection" scheme="https://kessentini-youssef.dev/tags/SQL-Injection/"/>
     <category term="CTF" scheme="https://kessentini-youssef.dev/tags/CTF/"/>
     <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
@@ -49,7 +49,7 @@
     <published>2026-09-16T16:00:00.000Z</published>
     <summary>PwnSec CTF 26: two easy web solves, a boolean blind SQLi built on a PHP type-confusion crash, and a pickle sandbox escape using OBJ instead of REDUCE</summary>
     <title>PwnSec CTF 2026</title>
-    <updated>2026-09-16T15:50:56.792Z</updated>
+    <updated>2026-09-22T19:46:41.664Z</updated>
   </entry>
   <entry>
     <author>
@@ -70,7 +70,7 @@
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="Home Lab" scheme="https://kessentini-youssef.dev/categories/Home-Lab/"/>
+    <category term="Projects" scheme="https://kessentini-youssef.dev/categories/Projects/"/>
     <category term="SOC" scheme="https://kessentini-youssef.dev/tags/SOC/"/>
     <category term="Wazuh" scheme="https://kessentini-youssef.dev/tags/Wazuh/"/>
     <category term="Azure" scheme="https://kessentini-youssef.dev/tags/Azure/"/>
@@ -84,7 +84,7 @@
       <![CDATA[A hybrid SOC home lab spanning OPNsense and Azure, with Wazuh detecting — and sometimes missing — four MITRE ATT&CK-mapped attack scenarios]]>
     </summary>
     <title>SOC Home Lab Project</title>
-    <updated>2026-08-03T16:37:51.840Z</updated>
+    <updated>2026-09-22T19:46:41.666Z</updated>
   </entry>
   <entry>
     <author>
@@ -105,7 +105,7 @@
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HTB Machines" scheme="https://kessentini-youssef.dev/categories/HTB-Machines/"/>
     <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
     <category term="Linux" scheme="https://kessentini-youssef.dev/tags/Linux/"/>
     <category term="SQL Injection" scheme="https://kessentini-youssef.dev/tags/SQL-Injection/"/>
@@ -121,7 +121,7 @@
     <published>2026-07-11T16:30:00.000Z</published>
     <summary>HTB Easy Linux machine — default creds into ZoneMinder, time-based SQL injection (CVE-2024-51482) to dump password hashes, and root via motionEye command injection (CVE-2025-60787)</summary>
     <title>CCTV</title>
-    <updated>2026-07-11T16:46:18.000Z</updated>
+    <updated>2026-09-22T19:46:41.648Z</updated>
   </entry>
   <entry>
     <author>
@@ -142,7 +142,7 @@
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HTB Machines" scheme="https://kessentini-youssef.dev/categories/HTB-Machines/"/>
     <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
     <category term="Linux" scheme="https://kessentini-youssef.dev/tags/Linux/"/>
     <category term="RCE" scheme="https://kessentini-youssef.dev/tags/RCE/"/>
@@ -158,13 +158,13 @@
     <published>2026-06-25T11:00:00.000Z</published>
     <summary>HTB Easy Linux machine — Wing FTP RCE via Null Byte Injection (CVE-2025-47812), credential harvesting, and root via Python tarfile symlink bypass (CVE-2025-4517)</summary>
     <title>WingData</title>
-    <updated>2026-06-28T19:09:21.000Z</updated>
+    <updated>2026-09-22T19:46:41.652Z</updated>
   </entry>
   <entry>
     <author>
       <name>Youssef Kessentini</name>
     </author>
-    <category term="HackTheBox" scheme="https://kessentini-youssef.dev/categories/HackTheBox/"/>
+    <category term="HTB Challenges" scheme="https://kessentini-youssef.dev/categories/HTB-Challenges/"/>
     <category term="HackTheBox" scheme="https://kessentini-youssef.dev/tags/HackTheBox/"/>
     <category term="Web" scheme="https://kessentini-youssef.dev/tags/Web/"/>
     <category term="LFI" scheme="https://kessentini-youssef.dev/tags/LFI/"/>
@@ -175,7 +175,7 @@
     <published>2026-06-20T19:00:00.000Z</published>
     <summary>HTB Web challenge — Admin registration, 4-digit brute force, and Local File Inclusion via PhantomJS PDF rendering</summary>
     <title>Dark Runes</title>
-    <updated>2026-06-20T19:50:25.000Z</updated>
+    <updated>2026-09-22T19:46:41.655Z</updated>
   </entry>
   <entry>
     <author>

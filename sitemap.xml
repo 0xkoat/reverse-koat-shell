@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://kessentini-youssef.dev/2026/09/22/CSAW-CTF-2026/</loc>
+    <loc>https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/</loc>
     
     <lastmod>2026-09-22</lastmod>
     
@@ -13,7 +13,43 @@
   <url>
     <loc>https://kessentini-youssef.dev/2026/09/16/PwnSec-CTF-2026/</loc>
     
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/2026/09/22/CSAW-CTF-2026/</loc>
+    
+    <lastmod>2026-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/2026/06/20/Dark-Runes/</loc>
+    
+    <lastmod>2026-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/2026/06/25/WingData/</loc>
+    
+    <lastmod>2026-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/2026/07/11/CCTV/</loc>
+    
+    <lastmod>2026-09-22</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -29,15 +65,6 @@
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/2026/08/03/SOC-Home-Lab-Project/</loc>
-    
-    <lastmod>2026-08-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://kessentini-youssef.dev/2026/07/21/CSRF/</loc>
     
     <lastmod>2026-07-21</lastmod>
@@ -47,36 +74,9 @@
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/2026/07/11/CCTV/</loc>
-    
-    <lastmod>2026-07-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://kessentini-youssef.dev/2026/07/01/Path-Traversal/</loc>
     
     <lastmod>2026-07-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/2026/06/25/WingData/</loc>
-    
-    <lastmod>2026-06-28</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/2026/06/20/Dark-Runes/</loc>
-    
-    <lastmod>2026-06-20</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -382,20 +382,6 @@
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
-    <lastmod>2026-09-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kessentini-youssef.dev/tags/Welcome/</loc>
-    <lastmod>2026-09-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://kessentini-youssef.dev/tags/RCE/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -451,17 +437,31 @@
     <priority>0.2</priority>
   </url>
   
-
-  
   <url>
-    <loc>https://kessentini-youssef.dev/categories/HackTheBox/</loc>
+    <loc>https://kessentini-youssef.dev/tags/Welcome/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/categories/CTF/</loc>
+    <loc>https://kessentini-youssef.dev/tags/SQLi/</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/categories/HTB-Machines/</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/categories/CTF-Writeups/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -475,7 +475,14 @@
   </url>
   
   <url>
-    <loc>https://kessentini-youssef.dev/categories/Home-Lab/</loc>
+    <loc>https://kessentini-youssef.dev/categories/HTB-Challenges/</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kessentini-youssef.dev/categories/Projects/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
